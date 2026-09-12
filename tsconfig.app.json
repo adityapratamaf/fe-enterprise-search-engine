@@ -16,7 +16,8 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    "baseUrl": ".",
+    // No "baseUrl": it is deprecated as of TS 6 and removed in TS 7. Since TS 4.1
+    // "paths" resolves relative to this file's directory on its own.
     "paths": {
       "@/*": ["./src/*"]
     },

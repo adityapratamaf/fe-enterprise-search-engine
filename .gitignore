@@ -1,5 +1,10 @@
 node_modules
 dist
 .env
-.vscode
 .DS_Store
+
+# Editor settings are per-user, except the few that must match the toolchain
+# (see .vscode/settings.json: it pins the editor to the project's TypeScript).
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json

@@ -1,0 +1,12 @@
+{
+  // Use the TypeScript pinned in package.json (5.6.3) instead of the version
+  // bundled with VS Code. Without this the editor reports errors that
+  // `npm run build` does not — a newer bundled TypeScript flagged `baseUrl`
+  // as removed while the pinned 5.6.3 still accepted it.
+  "typescript.tsdk": "node_modules/typescript/lib",
+
+  // Ask to switch to the workspace version on open; otherwise the setting above
+  // is inert until someone runs "TypeScript: Select TypeScript Version" by hand.
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "js/ts.tsdk.path": "node_modules/typescript/lib"
+}
