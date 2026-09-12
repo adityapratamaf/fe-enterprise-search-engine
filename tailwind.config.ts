@@ -74,7 +74,13 @@ export default {
         xl2: "18px",
       },
       fontFamily: {
+        /**
+         * "Inter Variable" is the family name @fontsource-variable/inter
+         * declares; plain "Inter" follows for anyone who has it installed
+         * locally, then the usual system stack as a last resort.
+         */
         sans: [
+          "Inter Variable",
           "Inter",
           "ui-sans-serif",
           "system-ui",
