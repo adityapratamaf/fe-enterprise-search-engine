@@ -57,6 +57,18 @@ export function Topbar({ onOpenNav }: { onOpenNav: () => void }) {
         </nav>
 
         <div className="ml-auto flex items-center gap-3">
+          {/* Decorative for now: there is no notifications feature behind it, and
+              the count is part of the mockup rather than real data. */}
+          <button
+            type="button"
+            className="relative hidden rounded-full p-2 text-ink-700 transition hover:bg-brand-50 sm:block"
+            aria-label="Notifikasi"
+          >
+            <Icon name="notification-3-line" className="text-xl" />
+            <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-danger-500 px-1 text-[9px] font-bold text-white">
+              3
+            </span>
+          </button>
           <UserMenu displayName={displayName} email={user?.email ?? ""} />
         </div>
       </div>

@@ -1,4 +1,5 @@
 import type { SearchEngineKind } from "@/api";
+import { SPBU_IMAGE_FALLBACK } from "../lib/spbuImage";
 import { SearchBar } from "./SearchBar";
 
 /** Example queries offered under the search box. */
@@ -20,9 +21,25 @@ export function SearchHero({ keyword, engine, onSubmit }: Props) {
   return (
     <section
       aria-labelledby="search-heading"
-      className="border-b border-line-200 bg-surface-accent"
+      className="relative overflow-hidden border-b border-line-200 bg-surface-accent"
     >
-      <div className="mx-auto max-w-[1540px] px-4 pb-5 pt-5 sm:px-6 lg:px-8 lg:pb-6 lg:pt-4">
+      {/* Decorative backdrop: tinted wash, station photo on the right, then a
+          second wash so the heading and search box stay legible over it. */}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-r from-surface-accent via-surface-accent/95 to-surface-accent/20"
+      />
+      <div
+        aria-hidden
+        className="absolute inset-y-0 right-0 hidden w-[48%] bg-cover bg-center opacity-70 md:block"
+        style={{ backgroundImage: `url(${SPBU_IMAGE_FALLBACK})` }}
+      />
+      <div
+        aria-hidden
+        className="absolute inset-y-0 right-0 hidden w-[58%] bg-gradient-to-l from-transparent via-surface-accent/25 to-surface-accent md:block"
+      />
+
+      <div className="relative mx-auto max-w-[1540px] px-4 pb-5 pt-5 sm:px-6 lg:px-8 lg:pb-6 lg:pt-4">
         <div className="mx-auto max-w-[930px] text-center">
           <h1
             id="search-heading"

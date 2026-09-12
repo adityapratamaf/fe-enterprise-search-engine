@@ -11,6 +11,7 @@ import {
   googleMapsDirectionsUrl,
   humanizeEnum,
 } from "@/lib/format";
+import { spbuImageUrl } from "../lib/spbuImage";
 import { facilityIcon, isOpen24Hours } from "../lib/taxonomy";
 import { PreviewMap } from "./PreviewMap";
 
@@ -40,6 +41,7 @@ export function SpbuDetailPanel({
       <Card className="overflow-hidden">
         <CardBody className="space-y-3 p-2">
           <Skeleton className="h-[260px] w-full rounded-xl" />
+          <Skeleton className="h-[126px] w-full rounded-lg" />
           <Skeleton className="h-4 w-2/3" />
           <Skeleton className="h-3 w-full" />
           <Skeleton className="h-3 w-4/5" />
@@ -71,86 +73,100 @@ export function SpbuDetailPanel({
       <CardBody className="p-2">
         <PreviewMap latitude={item.latitude} longitude={item.longitude} nama={item.nama} />
 
-        <div className="mt-2 rounded-lg border border-line-200 p-3">
-          <div className="flex items-start justify-between gap-2">
-            <h2 className="text-[15px] font-bold text-brand-600">{item.nama}</h2>
-            <div className="flex shrink-0 flex-col items-end gap-1">
-              <StatusBadge status={item.status} />
-              {isOpen24Hours(item.fasilitas) && <Badge tone="brand">Buka 24 jam</Badge>}
+        <div className="mt-2 overflow-hidden rounded-lg border border-line-200">
+          <img
+            src={spbuImageUrl(item)}
+            alt={`Foto ${item.nama}`}
+            width={410}
+            height={126}
+            loading="lazy"
+            decoding="async"
+            className="h-[126px] w-full object-cover"
+          />
+          <div className="p-3">
+            <div className="flex items-start justify-between gap-2">
+              <h2 className="text-[15px] font-bold text-brand-600">{item.nama}</h2>
+              <div className="flex shrink-0 flex-col items-end gap-1">
+                <StatusBadge status={item.status} />
+                {isOpen24Hours(item.fasilitas) && <Badge tone="brand">Buka 24 jam</Badge>}
+              </div>
             </div>
-          </div>
 
-          <p className="mt-1 text-[11px] text-ink-600">
-            {item.rating === null ? (
-              <span className="text-ink-400">Belum ada ulasan</span>
-            ) : (
+            <p className="mt-1 text-[11px] text-ink-600">
+              {item.rating === null ? (
+                <span className="text-ink-400">Belum ada ulasan</span>
+              ) : (
+                <>
+                  <Icon name="star-fill" className="mr-1 text-warning-500" />
+                  {formatRating(item.rating)} ({formatCount(item.jumlahUlasan)} ulasan)
+                </>
+              )}
+              {distance && <span className="ml-2">· {distance} dari titik acuan</span>}
+            </p>
+
+            <p className="mt-2 flex items-start gap-1 text-[11px] leading-4 text-ink-600">
+              <Icon name="map-pin-line" className="mt-0.5 shrink-0" />
+              <span>
+                {item.alamat}
+                {item.kodePos ? ` ${item.kodePos}` : ""}
+              </span>
+            </p>
+
+            <dl className="mt-3 grid grid-cols-2 gap-y-1.5 text-[10px]">
+              <DetailRow label="Kode SPBU" value={item.kodeSpbu} />
+              <DetailRow label="Provinsi" value={item.provinsi} />
+              <DetailRow label="Kota / Kabupaten" value={item.kota} />
+              <DetailRow label="Regional" value={`${item.regionalNama} (${item.regional})`} />
+              <DetailRow label="Tipe Kepemilikan" value={humanizeEnum(item.tipeKepemilikan)} />
+              <DetailRow
+                label="Dispenser / Nozzle"
+                value={`${formatCount(item.jumlahDispenser)} / ${formatCount(item.jumlahNozzle)}`}
+              />
+              <DetailRow label="Mulai Operasi" value={formatDate(item.tanggalOperasi)} />
+              <DetailRow label="Telepon" value={item.nomorTelepon ?? EMPTY_VALUE} />
+              <DetailRow
+                label="Koordinat"
+                value={formatCoordinates(item.latitude, item.longitude)}
+              />
+            </dl>
+
+            {item.produk.length > 0 && (
               <>
-                <Icon name="star-fill" className="mr-1 text-warning-500" />
-                {formatRating(item.rating)} ({formatCount(item.jumlahUlasan)} ulasan)
+                <h3 className="mt-3 text-[11px] font-bold text-ink-800">Produk Tersedia</h3>
+                <ul className="mt-1 flex flex-wrap gap-1.5">
+                  {item.produk.map((code, index) => (
+                    <li key={code}>
+                      <Badge>{item.produkNama[index] ?? code}</Badge>
+                    </li>
+                  ))}
+                </ul>
               </>
             )}
-            {distance && <span className="ml-2">· {distance} dari titik acuan</span>}
-          </p>
 
-          <p className="mt-2 flex items-start gap-1 text-[11px] leading-4 text-ink-600">
-            <Icon name="map-pin-line" className="mt-0.5 shrink-0" />
-            <span>
-              {item.alamat}
-              {item.kodePos ? ` ${item.kodePos}` : ""}
-            </span>
-          </p>
+            {item.fasilitas.length > 0 && (
+              <>
+                <h3 className="mt-3 text-[11px] font-bold text-ink-800">Fasilitas</h3>
+                <ul className="mt-1 flex flex-wrap gap-x-3 gap-y-1.5 text-[10px] text-ink-600">
+                  {item.fasilitas.map((code, index) => (
+                    <li key={code} className="flex items-center gap-1">
+                      <Icon name={facilityIcon(code)} className="text-[13px]" />
+                      {item.fasilitasNama[index] ?? code}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
 
-          <dl className="mt-3 grid grid-cols-2 gap-y-1.5 text-[10px]">
-            <DetailRow label="Kode SPBU" value={item.kodeSpbu} />
-            <DetailRow label="Provinsi" value={item.provinsi} />
-            <DetailRow label="Kota / Kabupaten" value={item.kota} />
-            <DetailRow label="Regional" value={`${item.regionalNama} (${item.regional})`} />
-            <DetailRow label="Tipe Kepemilikan" value={humanizeEnum(item.tipeKepemilikan)} />
-            <DetailRow
-              label="Dispenser / Nozzle"
-              value={`${formatCount(item.jumlahDispenser)} / ${formatCount(item.jumlahNozzle)}`}
-            />
-            <DetailRow label="Mulai Operasi" value={formatDate(item.tanggalOperasi)} />
-            <DetailRow label="Telepon" value={item.nomorTelepon ?? EMPTY_VALUE} />
-            <DetailRow label="Koordinat" value={formatCoordinates(item.latitude, item.longitude)} />
-          </dl>
-
-          {item.produk.length > 0 && (
-            <>
-              <h3 className="mt-3 text-[11px] font-bold text-ink-800">Produk Tersedia</h3>
-              <ul className="mt-1 flex flex-wrap gap-1.5">
-                {item.produk.map((code, index) => (
-                  <li key={code}>
-                    <Badge>{item.produkNama[index] ?? code}</Badge>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-
-          {item.fasilitas.length > 0 && (
-            <>
-              <h3 className="mt-3 text-[11px] font-bold text-ink-800">Fasilitas</h3>
-              <ul className="mt-1 flex flex-wrap gap-x-3 gap-y-1.5 text-[10px] text-ink-600">
-                {item.fasilitas.map((code, index) => (
-                  <li key={code} className="flex items-center gap-1">
-                    <Icon name={facilityIcon(code)} className="text-[13px]" />
-                    {item.fasilitasNama[index] ?? code}
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-
-          <a
-            href={googleMapsDirectionsUrl(item.latitude, item.longitude)}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="mt-4 flex h-10 items-center justify-center gap-2 rounded-xl bg-brand-600 text-[11px] font-semibold text-white transition hover:bg-brand-700"
-          >
-            <Icon name="navigation-line" />
-            Rute ke SPBU ini
-          </a>
+            <a
+              href={googleMapsDirectionsUrl(item.latitude, item.longitude)}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="mt-4 flex h-10 items-center justify-center gap-2 rounded-xl bg-brand-600 text-[11px] font-semibold text-white transition hover:bg-brand-700"
+            >
+              <Icon name="navigation-line" />
+              Rute ke SPBU ini
+            </a>
+          </div>
         </div>
       </CardBody>
     </Card>
