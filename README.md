@@ -8,18 +8,20 @@ pencari (Elasticsearch / SQL), filter berbasis facet, pencarian lewat gambar
 
 - Node.js 18.20+ (Node 20/22 disarankan)
 - npm 10+
-- Backend `SearchEngine-BE` berjalan (lihat bagian [API](#api))
+
+Backend **tidak diperlukan**. Secara bawaan aplikasi berjalan pada data mock di
+dalam browser (lihat [Mode data](#mode-data)).
 
 ## Run
 
 ```bash
 npm install
-cp .env.example .env    # sesuaikan bila backend tidak di port 5152
 npm run dev
 ```
 
-Buka `http://localhost:5173`. Aplikasi memerlukan login — seluruh endpoint
-pencarian di backend dilindungi `[Authorize]` dan permission `search.view`.
+Buka `http://localhost:5173`. Tidak perlu login: seluruh halaman terbuka dan
+data diambil dari fixture lokal. Halaman login tetap dapat dibuka di `/login`
+untuk dipratinjau, dan menerima kredensial apa pun.
 
 ## Quality checks
 
@@ -30,18 +32,47 @@ npm run format       # prettier --write .
 npm run build        # typecheck + vite production build
 ```
 
-## API
+## Mode data
 
-Base URL diatur lewat `.env`:
+`VITE_API_MODE` menentukan sumber data, dan bawaannya `mock`:
 
-```env
-VITE_API_BASE_URL=http://localhost:5152/api
+| Mode   | Perilaku                                                                       |
+| ------ | ------------------------------------------------------------------------------ |
+| `mock` | Fixture di `src/api/mock/`, dijalankan di browser. Tanpa backend, tanpa login. |
+| `live` | Memanggil `SearchEngine-BE` sungguhan, termasuk login dan refresh token.       |
+
+Kedua implementasi memenuhi tipe kontrak yang sama — `spbuMockApi` dan
+`authMockApi` dideklarasikan dengan `satisfies typeof spbuApi` / `typeof authApi`
+— sehingga keduanya tidak bisa menyimpang tanpa membuat typecheck gagal. Sisa
+aplikasi mengimpor `spbuApi`/`authApi` dari `@/api` dan tidak pernah tahu
+implementasi mana yang dipakai.
+
+Mock-nya bukan data diam: `src/api/mock/engine.ts` benar-benar menjalankan
+pencocokan kata kunci, toleransi salah ketik, sinonim alamat, penyorotan
+`<mark>`, hitungan facet, penyaring radius (haversine), pengurutan, dan
+paginasi. Perbedaan kemampuan kedua mesin juga ditiru: `Sql` hanya mencocokkan
+nama dan alamat dengan `LIKE`, tidak menghasilkan facet maupun penyorotan, dan
+melaporkan keterbatasan itu lewat `kemampuan` serta `catatan` — persis seperti
+backend. 26 SPBU dipakai sebagai fixture, memakai kode regional, produk, dan
+fasilitas yang sama dengan seeder backend.
+
+### Mengaktifkan backend
+
+```bash
+cp .env.example .env
+# lalu set:
+#   VITE_API_MODE=live
+#   VITE_API_BASE_URL=http://localhost:5152/api
 ```
 
 `5152` adalah port `dotnet run` pada `launchSettings.json` backend, dan
 `http://localhost:5173` sudah ada di daftar `Cors:AllowedOrigins`.
 
-Endpoint yang dipakai frontend:
+Untuk mengembalikan proteksi login, bungkus cabang layout di
+`src/app/router.tsx` dengan `RequireAuth` — komponennya sudah siap dan tidak
+dipakai saat ini.
+
+Endpoint yang dipetakan di layer API:
 
 | Endpoint                      | Permission       | Dipakai untuk                               |
 | ----------------------------- | ---------------- | ------------------------------------------- |
@@ -67,10 +98,12 @@ selalu menerima `T` dan kegagalan menjadi `ApiError` yang dilempar.
 src/
   api/                  transport + kontrak backend
     contracts/          tipe yang mirror DTO backend (auth, common, spbu)
-    resources/          authApi, spbuApi
+    resources/          implementasi live: authApi, spbuApi
+    mock/               implementasi offline: fixture + mesin pencari lokal
     http.ts             axios instance, interceptor, unwrap Result<T>
     tokenStore.ts       satu-satunya pemilik token di localStorage
     ApiError.ts         satu tipe error untuk semua mode kegagalan
+    index.ts            memilih implementasi berdasarkan VITE_API_MODE
   app/                  router, provider, error boundary rute
   components/
     ui/                 primitive lintas fitur (Button, Card, Input, Icon, ...)
@@ -106,6 +139,8 @@ screen reader.
   `keepPreviousData` supaya pindah halaman tidak mengosongkan daftar.
 - **Context** hanya untuk sesi (`AuthContext`). State drawer mobile dipegang
   lokal oleh `MainLayout`.
+- Pada mode mock, `AuthContext` memulai dengan sesi pratinjau sehingga tidak ada
+  gerbang login di depan aplikasi.
 
 ## Catatan dependency
 

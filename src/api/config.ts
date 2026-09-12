@@ -4,7 +4,18 @@
  */
 const DEFAULT_BASE_URL = "http://localhost:5152/api";
 
+/**
+ * Data source. `mock` runs entirely in the browser against local fixtures, so
+ * the UI is previewable with no backend and no real login; `live` talks to
+ * SearchEngine-BE. Set `VITE_API_MODE=live` in `.env` to switch.
+ *
+ * Defaults to `mock` on purpose: backend integration is not turned on yet.
+ */
+const MODE = import.meta.env.VITE_API_MODE === "live" ? "live" : "mock";
+
 export const API_CONFIG = {
+  mode: MODE,
+  useMock: MODE === "mock",
   baseURL: import.meta.env.VITE_API_BASE_URL ?? DEFAULT_BASE_URL,
   timeoutMs: 20_000,
 } as const;

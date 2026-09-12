@@ -8,7 +8,9 @@ import {
   type ReactNode,
 } from "react";
 import {
+  API_CONFIG,
   authApi,
+  MOCK_SESSION,
   setUnauthorizedHandler,
   tokenStore,
   type LoginPayload,
@@ -41,11 +43,16 @@ const EMPTY: AuthState = { user: null, modules: [] };
  * screen. The stored access token may already be expired; that is fine — the
  * first API call refreshes it, and if refresh fails the HTTP layer calls back
  * into `setUnauthorizedHandler` below and the session is dropped.
+ *
+ * In mock mode there is nothing to authenticate against, so the app simply
+ * starts with the preview session and the login screen stays optional.
  */
 function readStoredState(): AuthState {
   const session = tokenStore.getSession();
-  if (!session || !tokenStore.getRefresh()) return EMPTY;
-  return { user: session.user, modules: session.modules };
+  if (session && tokenStore.getRefresh()) {
+    return { user: session.user, modules: session.modules };
+  }
+  return API_CONFIG.useMock ? MOCK_SESSION : EMPTY;
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -56,10 +63,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setState(EMPTY);
   }, []);
 
+  // Only a live backend can invalidate a session; mock mode has no 401 to react to.
+  const watchUnauthorized = !API_CONFIG.useMock;
+
   useEffect(() => {
+    if (!watchUnauthorized) return;
     setUnauthorizedHandler(clearSession);
     return () => setUnauthorizedHandler(null);
-  }, [clearSession]);
+  }, [clearSession, watchUnauthorized]);
 
   const login = useCallback(async (payload: LoginPayload) => {
     const auth = await authApi.login(payload);

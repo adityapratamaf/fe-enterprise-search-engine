@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { isApiError } from "@/api";
 import { Button, Icon, Input, Spinner } from "@/components/ui";
@@ -10,7 +10,7 @@ type RedirectState = { from?: { pathname?: string } };
 export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, isAuthenticated } = useAuth();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,11 +20,11 @@ export function LoginPage() {
 
   const redirectTo = (location.state as RedirectState | null)?.from?.pathname ?? ROUTES.search;
 
-  // Covers both a successful submit and landing here with a live session.
-  useEffect(() => {
-    if (isAuthenticated) navigate(redirectTo, { replace: true });
-  }, [isAuthenticated, navigate, redirectTo]);
-
+  /**
+   * Navigates on submit rather than reacting to `isAuthenticated`. With the app
+   * unguarded, a session already exists on arrival, and a mount-time redirect
+   * would bounce straight back out before the screen could be seen.
+   */
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
@@ -32,6 +32,7 @@ export function LoginPage() {
 
     try {
       await login({ email, password });
+      navigate(redirectTo, { replace: true });
     } catch (cause) {
       setError(
         isApiError(cause) ? cause.message : "Tidak dapat masuk. Silakan coba beberapa saat lagi.",
