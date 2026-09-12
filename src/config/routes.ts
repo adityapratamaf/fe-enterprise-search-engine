@@ -6,3 +6,5 @@ export const ROUTES = {
   about: "/about",
   login: "/login",
 } as const;
+
+export type RoutePath = (typeof ROUTES)[keyof typeof ROUTES];

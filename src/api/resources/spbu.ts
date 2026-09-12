@@ -1,43 +1,39 @@
-import { BaseResource } from "../base";
+import { api } from "../http";
+import { ENDPOINTS } from "../endpoints";
+import type {
+  BenchmarkParams,
+  BenchmarkResponse,
+  ReindexResponse,
+  SearchByImageResponse,
+  SearchSpbuParams,
+  SearchSpbuResponse,
+  SpbuSuggestionResponse,
+} from "../contracts/spbu";
 
-export type SearchEngine = "Elasticsearch" | "Sql";
+export const spbuApi = {
+  search: (params: SearchSpbuParams, signal?: AbortSignal) =>
+    api.get<SearchSpbuResponse>(ENDPOINTS.spbu.search, { ...params }, { signal }),
 
-export type SearchSpbuParams = {
-  Engine?: SearchEngine;
-  Regional?: string[];
-  Provinsi?: string[];
-  Kota?: string[];
-  Produk?: string[];
-  Fasilitas?: string[];
-  Status?: string[];
-  TipeKepemilikan?: string[];
-  Lat?: number;
-  Lon?: number;
-  RadiusKm?: number;
-  IncludeFacets?: boolean;
-  PageNumber?: number;
-  PageSize?: number;
-  Search?: string;
-  SortBy?: string;
-  IsDescending?: boolean;
+  /** The backend returns an empty list for queries under two characters. */
+  suggestion: (q: string, limit = 10, signal?: AbortSignal) =>
+    api.get<SpbuSuggestionResponse>(ENDPOINTS.spbu.suggestion, { q, limit }, { signal }),
+
+  /** PNG or JPEG, 10 MB max; OCR text is returned alongside the results. */
+  searchByImage: (file: File, pageNumber = 1, pageSize = 10, signal?: AbortSignal) => {
+    const body = new FormData();
+    body.append("file", file);
+
+    // No Content-Type here: the browser sets multipart with the boundary.
+    return api.post<SearchByImageResponse>(ENDPOINTS.spbu.image, body, {
+      params: { pageNumber, pageSize },
+      signal,
+    });
+  },
+
+  /** Runs both engines synchronously; can take several seconds. */
+  benchmark: (params: BenchmarkParams, signal?: AbortSignal) =>
+    api.get<BenchmarkResponse>(ENDPOINTS.spbu.benchmark, { ...params }, { signal }),
+
+  /** Queues a Hangfire job and returns immediately. */
+  reindex: () => api.post<ReindexResponse>(ENDPOINTS.spbu.reindex),
 };
-
-class SpbuResource extends BaseResource {
-  search(params: SearchSpbuParams) {
-    return this.get("/search/spbu", params as unknown as Record<string, unknown>);
-  }
-
-  suggestion(q: string) {
-    return this.get("/search/spbu/suggestion", { q });
-  }
-
-  detail(kode: string) {
-    return this.get(`/search/spbu/${encodeURIComponent(kode)}`);
-  }
-
-  benchmark(params?: { search?: string; pageSize?: number }) {
-    return this.get("/search/spbu/benchmark", params);
-  }
-}
-
-export const spbuResource = new SpbuResource();

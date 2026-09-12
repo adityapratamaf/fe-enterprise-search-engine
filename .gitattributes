@@ -1,0 +1,11 @@
+# Keep line endings LF in the repository and in the working tree, so
+# .editorconfig, Prettier (endOfLine: lf) and Git agree on Windows too.
+# Without this, a fresh clone checks out CRLF and `npm run format:check` fails.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary

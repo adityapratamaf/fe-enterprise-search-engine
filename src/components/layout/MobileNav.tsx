@@ -1,30 +1,48 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { Link } from "react-router-dom";
-import { ROUTES } from "../../config/routes";
-import { useSidebar } from "../../contexts/SidebarContext";
+import { NavLink } from "react-router-dom";
+import { Icon } from "@/components/ui";
+import { NAV_ITEMS } from "@/config/navigation";
+import { ROUTES } from "@/config/routes";
+import { cn } from "@/lib/utils";
 
-const links = [
-  ["SPBU Search", ROUTES.search],
-  ["Peta", ROUTES.map],
-  ["Benchmark", ROUTES.benchmark],
-  ["Analitik", ROUTES.analytics],
-  ["Tentang", ROUTES.about],
-] as const;
-
-export function MobileNav() {
-  const { isOpen, close } = useSidebar();
+export function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
   return (
-    <Dialog.Root open={isOpen} onOpenChange={(open) => !open && close()}>
+    <Dialog.Root open={open} onOpenChange={(next) => !next && onClose()}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-[60] bg-slate-950/30 backdrop-blur-sm lg:hidden" />
+        <Dialog.Overlay className="fixed inset-0 z-[60] bg-surface-inverse/30 backdrop-blur-sm lg:hidden" />
         <Dialog.Content className="fixed left-0 top-0 z-[70] h-full w-[290px] bg-white p-5 shadow-2xl lg:hidden">
+          <Dialog.Title className="sr-only">Navigasi</Dialog.Title>
           <div className="mb-8 flex items-center justify-between">
-            <img src="/pertamina-logo.png" alt="Pertamina" className="h-9 w-[155px] object-contain object-left" />
-            <Dialog.Close asChild><button className="rounded-lg p-2 text-slate-600"><i className="ri-close-line text-xl" /></button></Dialog.Close>
+            <img
+              src="/pertamina-logo.png"
+              alt="Pertamina"
+              width={155}
+              height={36}
+              className="h-9 w-[155px] object-contain object-left"
+            />
+            <Dialog.Close asChild>
+              <button type="button" className="rounded-lg p-2 text-ink-600" aria-label="Tutup menu">
+                <Icon name="close-line" className="text-xl" />
+              </button>
+            </Dialog.Close>
           </div>
-          <nav className="space-y-1">
-            {links.map(([label, to]) => (
-              <Link key={to} to={to} onClick={close} className="flex items-center rounded-xl px-4 py-3 text-sm font-semibold text-[#24426c] hover:bg-[#eef6ff]">{label}</Link>
+          <nav aria-label="Navigasi utama" className="space-y-1">
+            {NAV_ITEMS.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.to === ROUTES.search}
+                onClick={onClose}
+                className={({ isActive }) =>
+                  cn(
+                    "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition",
+                    isActive ? "bg-brand-50 text-brand-700" : "text-ink-700 hover:bg-brand-50",
+                  )
+                }
+              >
+                <Icon name={item.icon} className="text-lg" />
+                {item.label}
+              </NavLink>
             ))}
           </nav>
         </Dialog.Content>

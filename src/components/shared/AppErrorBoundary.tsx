@@ -1,32 +1,56 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 
-interface Props { children: ReactNode }
-interface State { hasError: boolean; message: string }
+type Props = { children: ReactNode };
+type State = { hasError: boolean; message: string };
 
+/**
+ * Catches failures that happen outside the router — router initialisation, or a
+ * crash in the provider tree itself. Page-level errors are caught by
+ * `RouteError`, which React Router reaches first.
+ *
+ * Intentionally dependency-free: it must still render when the app around it
+ * could not start.
+ */
 export class AppErrorBoundary extends Component<Props, State> {
-  state: State = { hasError: false, message: "" };
+  override state: State = { hasError: false, message: "" };
 
   static getDerivedStateFromError(error: unknown): State {
-    return { hasError: true, message: error instanceof Error ? error.message : "Terjadi kesalahan pada aplikasi." };
+    return {
+      hasError: true,
+      message: error instanceof Error ? error.message : "Terjadi kesalahan pada aplikasi.",
+    };
   }
 
-  componentDidCatch(error: Error, info: ErrorInfo) {
+  override componentDidCatch(error: Error, info: ErrorInfo) {
     if (import.meta.env.DEV) console.error("UI error", error, info);
   }
 
-  handleReload = () => window.location.reload();
-
-  render() {
+  override render() {
     if (!this.state.hasError) return this.props.children;
+
     return (
-      <main className="grid min-h-screen place-items-center bg-[#f7fbff] px-5 py-10">
-        <section className="w-full max-w-lg rounded-2xl border border-[#dfe9f5] bg-white p-7 text-center shadow-[0_16px_50px_rgba(24,58,100,.09)]">
-          <div className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-[#fff1f1] text-[#d92d20]"><i className="ri-error-warning-line text-2xl" /></div>
-          <h1 className="mt-4 text-lg font-bold text-[#12294d]">Halaman mengalami kendala</h1>
-          <p className="mt-2 text-sm leading-6 text-[#657d9d]">Aplikasi tetap aman dijalankan. Silakan muat ulang halaman untuk mencoba lagi.</p>
-          {import.meta.env.DEV && <p className="mt-3 rounded-lg bg-[#f7f9fc] p-3 text-left text-xs text-[#7b8da6]">{this.state.message}</p>}
-          <button type="button" onClick={this.handleReload} className="mt-5 rounded-xl bg-[#1268ee] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#0758d4]">Muat ulang</button>
-        </section>
+      <main className="grid min-h-screen place-items-center bg-surface-base px-5 py-10">
+        <div className="w-full max-w-lg rounded-2xl border border-line-200 bg-white p-7 text-center shadow-overlay">
+          <div className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-danger-50 text-danger-500">
+            <i className="ri-error-warning-line text-2xl" aria-hidden />
+          </div>
+          <h1 className="mt-4 text-lg font-bold text-ink-900">Aplikasi gagal dimuat</h1>
+          <p className="mt-2 text-sm leading-6 text-ink-500">
+            Silakan muat ulang halaman untuk mencoba lagi.
+          </p>
+          {import.meta.env.DEV && (
+            <p className="mt-3 rounded-lg bg-surface-sunken p-3 text-left text-xs text-ink-500">
+              {this.state.message}
+            </p>
+          )}
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="mt-5 rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"
+          >
+            Muat ulang
+          </button>
+        </div>
       </main>
     );
   }

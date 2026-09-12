@@ -1,71 +1,124 @@
 # SPBU Search Frontend
 
-Frontend React + TypeScript untuk platform pencarian SPBU Pertamina dengan UI search-engine, dua engine (Elasticsearch / SQL), filter, preview peta, dan detail SPBU.
+Frontend React + TypeScript untuk platform pencarian SPBU Pertamina: dua mesin
+pencari (Elasticsearch / SQL), filter berbasis facet, pencarian lewat gambar
+(OCR), dan panel detail SPBU.
 
 ## Requirements
 
 - Node.js 18.20+ (Node 20/22 disarankan)
 - npm 10+
+- Backend `SearchEngine-BE` berjalan (lihat bagian [API](#api))
 
 ## Run
 
 ```bash
 npm install
+cp .env.example .env    # sesuaikan bila backend tidak di port 5152
 npm run dev
 ```
 
-Buka `http://localhost:5173`.
+Buka `http://localhost:5173`. Aplikasi memerlukan login — seluruh endpoint
+pencarian di backend dilindungi `[Authorize]` dan permission `search.view`.
 
 ## Quality checks
 
 ```bash
-npm run build
-npm run preview
-npm run lint
+npm run typecheck    # tsc -b --force
+npm run lint         # eslint, --max-warnings 0
+npm run format       # prettier --write .
+npm run build        # typecheck + vite production build
 ```
-
-`npm run build` menjalankan TypeScript check lalu Vite production build.
-
-## Catatan dependency
-
-- Vite dinaikkan ke **6.4.x** karena Vite 5 sudah tidak menjadi baseline yang baik untuk project baru dan security patch terbaru tidak lagi tersedia di Vite 5.
-- Recharts menggunakan **3.x**, bukan 2.x yang sudah tidak aktif.
-- ESLint menggunakan **9 + flat config**, sehingga tidak lagi bergantung pada ESLint 8 dan paket legacy `@humanwhocodes/*`.
-- React tetap **18.3.1** dan React Router tetap pada **major 6** agar API `createBrowserRouter` yang dipakai project tetap stabil.
-- `server.host` dibatasi ke `localhost` secara default supaya Vite dev server tidak otomatis terbuka ke network lokal.
 
 ## API
 
-Set base URL melalui `.env`:
+Base URL diatur lewat `.env`:
 
 ```env
-VITE_API_BASE_URL=http://localhost:5000/api
+VITE_API_BASE_URL=http://localhost:5152/api
 ```
 
-Endpoint SPBU yang sudah disiapkan di layer resource:
+`5152` adalah port `dotnet run` pada `launchSettings.json` backend, dan
+`http://localhost:5173` sudah ada di daftar `Cors:AllowedOrigins`.
 
-- `GET /search/spbu`
-- `GET /search/spbu/suggestion`
-- `GET /search/spbu/{kode}`
-- `GET /search/spbu/benchmark`
+Endpoint yang dipakai frontend:
 
-UI saat ini menggunakan mock data supaya frontend dapat langsung dipreview tanpa backend.
+| Endpoint                      | Permission       | Dipakai untuk                               |
+| ----------------------------- | ---------------- | ------------------------------------------- |
+| `POST /auth/login`            | —                | Login, menyimpan token + daftar permission  |
+| `POST /auth/refresh`          | —                | Perpanjangan sesi otomatis saat 401         |
+| `POST /auth/logout`           | (login)          | Keluar                                      |
+| `GET /search/spbu`            | `search.view`    | Hasil pencarian, facet, kemampuan mesin     |
+| `GET /search/spbu/suggestion` | `search.view`    | Saran ketik-langsung                        |
+| `POST /search/spbu/image`     | `search.view`    | Pencarian dari foto (OCR)                   |
+| `GET /search/spbu/benchmark`  | `search.execute` | Tersedia di layer API, halaman belum dibuat |
 
-## Arsitektur component-first
+**Tidak ada** endpoint `GET /search/spbu/{kode}`. Backend sengaja mengirim
+dokumen SPBU secara utuh di setiap hasil pencarian, sehingga panel detail tidak
+memerlukan permintaan kedua.
 
-Komponen lintas halaman diletakkan di:
+Semua respons dibungkus `Result<T>` (`{ success, message, data, errors }`).
+Envelope itu dibuka di satu tempat — `src/api/http.ts` — sehingga pemanggil
+selalu menerima `T` dan kegagalan menjadi `ApiError` yang dilempar.
+
+## Struktur
 
 ```text
-src/components/ui
-src/components/layout
-src/components/navigation
-src/components/search
-src/components/map
-src/components/shared
+src/
+  api/                  transport + kontrak backend
+    contracts/          tipe yang mirror DTO backend (auth, common, spbu)
+    resources/          authApi, spbuApi
+    http.ts             axios instance, interceptor, unwrap Result<T>
+    tokenStore.ts       satu-satunya pemilik token di localStorage
+    ApiError.ts         satu tipe error untuk semua mode kegagalan
+  app/                  router, provider, error boundary rute
+  components/
+    ui/                 primitive lintas fitur (Button, Card, Input, Icon, ...)
+    layout/             MainLayout, Topbar, MobileNav, UserMenu
+    shared/             AppErrorBoundary, StatusBadge
+  config/               routes.ts, navigation.ts
+  features/
+    auth/               AuthContext, RequireAuth, LoginPage, permissions
+    search/             SearchPage + components/, hooks/, lib/
+    misc/               halaman placeholder
+  lib/                  utilitas umum (cn, formatter angka/tanggal/URL)
 ```
 
-Halaman tidak membuat ulang komponen dasar seperti Button, Card, Badge, SearchBar, FilterSidebar, ResultCard, Topbar, dan PreviewMap.
+Import memakai alias `@/` (dikonfigurasi di `vite.config.ts` dan
+`tsconfig.app.json`), bukan path relatif berantai.
+
+### Warna dan primitive
+
+Palet didefinisikan sebagai skala semantik di `tailwind.config.ts`: `brand`,
+`ink` (teks), `line` (border), `surface`, `success`, `danger`, `warning`.
+Komponen tidak menulis nilai hex langsung — satu-satunya pengecualian adalah
+tekstur peta placeholder di `PreviewMap`.
+
+Ikon selalu lewat komponen `<Icon />` agar glyph dekoratif tidak ikut dibaca
+screen reader.
+
+### State
+
+- **URL adalah sumber kebenaran** untuk state pencarian: kata kunci, mesin,
+  halaman, urutan, dan seluruh filter facet (`src/features/search/lib/searchParams.ts`).
+  Hasil pencarian karena itu bisa dibagikan, tahan reload, dan tombol back jalan.
+- **TanStack Query** menangani server state: cache, dedup, retry, dan
+  `keepPreviousData` supaya pindah halaman tidak mengosongkan daftar.
+- **Context** hanya untuk sesi (`AuthContext`). State drawer mobile dipegang
+  lokal oleh `MainLayout`.
+
+## Catatan dependency
+
+- Vite **6.4.x**, ESLint **9 + flat config**, React **18.3.1**, React Router
+  **major 6** (`createBrowserRouter`).
+- `server.host` dibatasi ke `localhost` supaya dev server tidak otomatis
+  terbuka ke jaringan lokal.
+- Paket berikut **belum terpakai** dan menunggu keputusan produk: `leaflet`,
+  `react-leaflet`, `leaflet.markercluster`, `recharts`,
+  `@radix-ui/react-tabs`, `react-is`, `zustand`, `framer-motion`.
+  `PreviewMap` masih pratinjau bergaya, bukan peta sungguhan.
 
 ## Responsive
 
-Layout desktop memakai tiga kolom: filter, hasil pencarian, dan detail/peta. Pada tablet/mobile kolom akan berubah menjadi stack agar tetap usable.
+Layout desktop memakai tiga kolom: filter, hasil pencarian, dan detail/peta.
+Pada tablet/mobile kolom menjadi satu stack, dan navigasi berpindah ke drawer.
