@@ -3,10 +3,10 @@ import type { authApi as LiveAuthApi } from "../resources/auth";
 
 const MOCK_USER: UserResponse = {
   id: "mock-user-1",
-  username: "preview",
-  email: "preview@pertamina.local",
-  firstName: "Preview",
-  lastName: "User",
+  username: "apratama",
+  email: "aditya.pratama@pertamina.com",
+  firstName: "Aditya",
+  lastName: "Pratama",
   role: "Admin",
   isActive: true,
   isSuperUser: false,

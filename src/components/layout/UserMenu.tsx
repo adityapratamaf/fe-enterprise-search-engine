@@ -30,20 +30,21 @@ export function UserMenu({ displayName, email }: { displayName: string; email: s
       <DropdownMenu.Trigger asChild>
         <button
           type="button"
-          className="flex items-center gap-2 rounded-xl px-1.5 py-1 transition hover:bg-brand-50"
+          className="flex items-center gap-2 rounded-xl py-1 pl-1 pr-1.5 transition hover:bg-brand-50"
           aria-label={`Menu akun ${displayName}`}
         >
           <span
             aria-hidden
-            className="grid h-8 w-8 place-items-center rounded-full bg-brand-800 text-xs font-semibold text-white"
+            className="grid h-9 w-9 place-items-center rounded-full bg-brand-navy text-[13px] font-semibold text-white"
           >
             {initials}
           </span>
-          <span className="hidden text-right sm:block">
-            <span className="block text-[12px] font-semibold text-ink-900">{displayName}</span>
-            <span className="block text-[10px] text-ink-400">{email}</span>
+          {/* The design shows the name on a single line; the email belongs to the
+              dropdown, where there is room for it. */}
+          <span className="hidden text-[13.5px] font-medium text-ink-900 sm:block">
+            {displayName}
           </span>
-          <Icon name="arrow-down-s-line" className="text-ink-500" />
+          <Icon name="arrow-down-s-line" className="text-lg text-ink-600" />
         </button>
       </DropdownMenu.Trigger>
 

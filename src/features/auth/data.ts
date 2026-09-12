@@ -1,3 +1,4 @@
+import { BRAND_TAGLINE } from "@/config/branding";
 import type { LoginHighlight } from "./types";
 
 /** Permission codes this frontend actually depends on. */
@@ -25,5 +26,6 @@ export const LOGIN_HIGHLIGHTS: LoginHighlight[] = [
   },
 ];
 
-export const LOGIN_TAGLINE = "Energizing a Sustainable Tomorrow";
+/** Same line as the header panel; kept in one place so they cannot drift. */
+export const LOGIN_TAGLINE = BRAND_TAGLINE;
 export const LOGIN_SPLASH_IMAGE = "/spbu-default.jpg";

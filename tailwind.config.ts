@@ -23,6 +23,8 @@ export default {
           700: "#0758d4",
           800: "#1555ad",
           900: "#0b3a7a",
+          /** Steel navy used for avatars and badges in the header design. */
+          navy: "#315b8c",
         },
         /** Navy text scale: 300 placeholder → 900 heading. */
         ink: {
