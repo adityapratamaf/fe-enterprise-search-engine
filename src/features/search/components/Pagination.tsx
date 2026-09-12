@@ -1,9 +1,7 @@
 import { Button, Icon } from "@/components/ui";
 import { cn } from "@/lib/utils";
-import { formatCount } from "@/lib/format";
-
-/** How many numbered buttons to show around the current page. */
-const WINDOW = 2;
+import { formatCount } from "@/utils/format";
+import { PAGINATION_WINDOW } from "../data";
 
 /**
  * Builds a page window with ellipsis markers, driven by the real `totalPages`
@@ -14,7 +12,7 @@ function buildPages(current: number, total: number): (number | "gap")[] {
   if (total <= 7) return Array.from({ length: total }, (_, index) => index + 1);
 
   const pages = new Set<number>([1, total, current]);
-  for (let offset = 1; offset <= WINDOW; offset += 1) {
+  for (let offset = 1; offset <= PAGINATION_WINDOW; offset += 1) {
     if (current - offset > 1) pages.add(current - offset);
     if (current + offset < total) pages.add(current + offset);
   }

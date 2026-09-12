@@ -19,9 +19,3 @@ export function hasPermission(
       entry.actions.some((granted) => granted.toLowerCase() === wantedAction),
   );
 }
-
-/** Permission codes this frontend actually depends on. */
-export const PERMISSIONS = {
-  searchView: { module: "search", action: "view" },
-  searchExecute: { module: "search", action: "execute" },
-} as const;

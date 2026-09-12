@@ -2,7 +2,7 @@ import { Link, NavLink } from "react-router-dom";
 import { Icon } from "@/components/ui";
 import { NAV_ITEMS } from "@/config/navigation";
 import { ROUTES } from "@/config/routes";
-import { useAuth } from "@/features/auth/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { UserMenu } from "./UserMenu";
 

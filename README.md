@@ -26,11 +26,15 @@ untuk dipratinjau, dan menerima kredensial apa pun.
 ## Quality checks
 
 ```bash
-npm run typecheck    # tsc -b --force
-npm run lint         # eslint, --max-warnings 0
-npm run format       # prettier --write .
-npm run build        # typecheck + vite production build
+npm run typecheck      # tsc -b --force
+npm run lint           # eslint, --max-warnings 0
+npm run format:check   # prettier --check .
+npm run test           # vitest run
+npm run test:coverage  # vitest run --coverage
+npm run build          # typecheck + vite production build
 ```
+
+Kelimanya dijalankan di CI (`.github/workflows/ci.yml`) pada setiap push dan PR.
 
 ## Mode data
 
@@ -110,12 +114,28 @@ src/
     layout/             MainLayout, Topbar, MobileNav, UserMenu
     shared/             AppErrorBoundary, StatusBadge
   config/               routes.ts, navigation.ts
+  contexts/             AuthContext (sesi, dipakai lintas fitur)
   features/
-    auth/               AuthContext, RequireAuth, LoginPage, permissions
-    search/             SearchPage + components/, hooks/, lib/
+    auth/               components/ · data.ts · types.ts · utils.ts · LoginPage.tsx
+    search/             components/ · hooks/ · data.ts · types.ts · utils.ts · SearchPage.tsx
+    map/                components/ · data.ts · types.ts · MapPage.tsx
     misc/               halaman placeholder
-  lib/                  utilitas umum (cn, formatter angka/tanggal/URL)
+  hooks/                hook lintas fitur (useDebouncedValue, useClickOutside)
+  lib/                  utils.ts (cn)
+  stores/               zustand: useMapViewStore
+  test/                 setup Vitest
+  types/                tipe UI lintas fitur (map.ts)
+  utils/                formatter angka/tanggal/koordinat/URL
+  App.tsx
+  index.css
+  main.tsx
+  vite-env.d.ts
 ```
+
+Tiap fitur memakai pola yang sama: `components/` untuk komponen milik halaman itu,
+`data.ts` untuk konstanta dan copy, `types.ts` untuk tipe, `utils.ts` untuk logika
+murni, dan file halaman di akarnya. Konstanta tidak ditulis ulang di dalam
+komponen — semuanya berasal dari `data.ts` fitur yang bersangkutan.
 
 Import memakai alias `@/` (dikonfigurasi di `vite.config.ts` dan
 `tsconfig.app.json`), bukan path relatif berantai.
@@ -139,6 +159,8 @@ screen reader.
   `keepPreviousData` supaya pindah halaman tidak mengosongkan daftar.
 - **Context** hanya untuk sesi (`AuthContext`). State drawer mobile dipegang
   lokal oleh `MainLayout`.
+- **Zustand** hanya untuk posisi peta (`stores/useMapViewStore`), supaya halaman
+  peta dan panel peta di pencarian tidak saling mereset sudut pandang.
 - Pada mode mock, `AuthContext` memulai dengan sesi pratinjau sehingga tidak ada
   gerbang login di depan aplikasi.
 
@@ -148,10 +170,15 @@ screen reader.
   **major 6** (`createBrowserRouter`).
 - `server.host` dibatasi ke `localhost` supaya dev server tidak otomatis
   terbuka ke jaringan lokal.
-- Paket berikut **belum terpakai** dan menunggu keputusan produk: `leaflet`,
-  `react-leaflet`, `leaflet.markercluster`, `recharts`,
-  `@radix-ui/react-tabs`, `react-is`, `zustand`, `framer-motion`.
-  `PreviewMap` masih pratinjau bergaya, bukan peta sungguhan.
+- Peta memakai **Leaflet + leaflet.markercluster** sungguhan (`features/map`).
+  Marker berupa `divIcon` berwarna menurut status, sehingga tidak bergantung pada
+  aset gambar Leaflet yang biasa pecah saat di-bundle. Bundle Leaflet (~191 kB)
+  dimuat terpisah: panel peta di halaman pencarian memakai `React.lazy`, jadi
+  bobotnya tidak masuk ke muatan awal.
+- `recharts`, `@radix-ui/react-tabs`, `react-is`, dan `framer-motion` sudah
+  dihapus karena tidak terpakai. Animasi masuk hasil pencarian kini memakai
+  keyframe CSS — tampilannya sama, tanpa 100 kB pustaka, dan menghormati
+  `prefers-reduced-motion`.
 
 ## Responsive
 

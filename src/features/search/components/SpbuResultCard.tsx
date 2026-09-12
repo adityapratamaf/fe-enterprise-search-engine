@@ -2,13 +2,11 @@ import type { SpbuSearchItem } from "@/api";
 import { Badge, Icon } from "@/components/ui";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { cn } from "@/lib/utils";
-import { formatCount, formatDistance, formatRating } from "@/lib/format";
-import { highlightedField } from "../lib/highlight";
-import { spbuImageUrl } from "../lib/spbuImage";
-import { facilityIcon, isOpen24Hours } from "../lib/taxonomy";
-
-const PRODUCT_LIMIT = 4;
-const FACILITY_LIMIT = 5;
+import { formatCount, formatDistance, formatRating } from "@/utils/format";
+import { highlightedField } from "../highlight";
+import { FACILITY_LIMIT, PRODUCT_LIMIT } from "../data";
+import { spbuImageUrl } from "../utils";
+import { facilityIcon, isOpen24Hours } from "../utils";
 
 type Props = {
   item: SpbuSearchItem;

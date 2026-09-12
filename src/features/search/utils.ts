@@ -1,37 +1,31 @@
-import { FACET_KEYS, type FacetKey, type SearchEngineKind, type SearchSpbuParams } from "@/api";
+import {
+  FACET_KEYS,
+  SORT_FIELDS,
+  type FacetKey,
+  type SearchSpbuParams,
+  type SpbuSearchItem,
+} from "@/api";
+import {
+  DEFAULT_ENGINE,
+  DEFAULT_PAGE_SIZE,
+  FACET_SIZE,
+  FACILITY_ICONS,
+  FALLBACK_FACILITY_ICON,
+  OPEN_24H_CODE,
+  QUERY_KEYS,
+  SPBU_IMAGE_FALLBACK,
+} from "./data";
+import type { SearchFilters, SearchState, SortSelection } from "./types";
 
-/**
- * URL is the source of truth for search state, so a result page is shareable,
- * survives a reload, and works with the browser's back button — none of which
- * held when this all lived in component `useState`.
- */
-export const QUERY_KEYS = {
-  keyword: "q",
-  engine: "engine",
-  page: "page",
-  size: "size",
-  sort: "sort",
-  desc: "desc",
-  ratingMin: "rating",
-  ulasanMin: "ulasan",
-} as const;
+// ---------------------------------------------------------------------------
+// URL state
+// ---------------------------------------------------------------------------
 
-export const DEFAULT_PAGE_SIZE = 10;
-export const DEFAULT_ENGINE: SearchEngineKind = "Elasticsearch";
-/** Provinsi and kota facets need the full list for client-side filtering. */
-export const FACET_SIZE = 600;
-
-export type SearchState = {
-  keyword: string;
-  engine: SearchEngineKind;
-  page: number;
-  pageSize: number;
-  sortBy: string;
-  isDescending: boolean;
-  ratingMin: number | undefined;
-  ulasanMin: number | undefined;
-  filters: Record<FacetKey, string[]>;
-};
+export function emptyFilters(): SearchFilters {
+  const filters = {} as SearchFilters;
+  for (const key of FACET_KEYS) filters[key] = [];
+  return filters;
+}
 
 function parsePositiveInt(value: string | null, fallback: number): number {
   const parsed = Number.parseInt(value ?? "", 10);
@@ -44,19 +38,11 @@ function parseNumber(value: string | null): number | undefined {
   return Number.isFinite(parsed) ? parsed : undefined;
 }
 
-export function emptyFilters(): Record<FacetKey, string[]> {
-  const filters = {} as Record<FacetKey, string[]>;
-  for (const key of FACET_KEYS) filters[key] = [];
-  return filters;
-}
-
 export function readSearchState(params: URLSearchParams): SearchState {
   const engine = params.get(QUERY_KEYS.engine);
 
   const filters = emptyFilters();
-  for (const key of FACET_KEYS) {
-    filters[key] = params.getAll(key);
-  }
+  for (const key of FACET_KEYS) filters[key] = params.getAll(key);
 
   return {
     keyword: params.get(QUERY_KEYS.keyword) ?? "",
@@ -124,8 +110,78 @@ export function toSearchRequest(state: SearchState): SearchSpbuParams {
 }
 
 export function countActiveFilters(state: SearchState): number {
-  const facetCount = FACET_KEYS.reduce((total, key) => total + state.filters[key].length, 0);
+  const facetCount = FACET_KEYS.reduce(
+    (total, key: FacetKey) => total + state.filters[key].length,
+    0,
+  );
   return (
     facetCount + (state.ratingMin === undefined ? 0 : 1) + (state.ulasanMin === undefined ? 0 : 1)
   );
+}
+
+/** Splits a `SortOption.value` such as `"nama:desc"` into its two parts. */
+export function parseSortValue(value: string): SortSelection {
+  const [field = "", direction] = value.split(":");
+  const isKnown = (SORT_FIELDS as readonly string[]).includes(field);
+  return { sortBy: isKnown ? field : "", isDescending: direction === "desc" };
+}
+
+export function toSortValue(sortBy: string, isDescending: boolean): string {
+  return sortBy ? `${sortBy}:${isDescending ? "desc" : "asc"}` : "";
+}
+
+// ---------------------------------------------------------------------------
+// Taxonomy
+// ---------------------------------------------------------------------------
+
+export function facilityIcon(code: string): string {
+  return FACILITY_ICONS[code] ?? FALLBACK_FACILITY_ICON;
+}
+
+/** The old UI printed this badge on every card regardless of the station. */
+export function isOpen24Hours(fasilitas: string[]): boolean {
+  return fasilitas.includes(OPEN_24H_CODE);
+}
+
+/**
+ * Facet values arrive as codes (`PERTAMAX_TURBO`). Items carry a parallel `*Nama`
+ * array with display names, so the result list learns the names of whatever is on
+ * screen and this covers the rest.
+ */
+export function prettifyCode(code: string): string {
+  return code
+    .split("_")
+    .map((part) => (part.length > 3 ? part[0] + part.slice(1).toLowerCase() : part))
+    .join(" ");
+}
+
+/**
+ * Builds a facet-code to display-name map from the result items, since facet
+ * buckets carry codes only.
+ */
+export function buildLabelMap(items: SpbuSearchItem[]): Record<string, string> {
+  const labels: Record<string, string> = {};
+
+  for (const item of items) {
+    item.produk.forEach((code, index) => {
+      const name = item.produkNama[index];
+      if (name) labels[code] = name;
+    });
+    item.fasilitas.forEach((code, index) => {
+      const name = item.fasilitasNama[index];
+      if (name) labels[code] = name;
+    });
+    if (item.regional && item.regionalNama) labels[item.regional] = item.regionalNama;
+  }
+
+  return labels;
+}
+
+/**
+ * Single source for a station's photo. The API has no image field yet, so every
+ * station renders the shared asset — when that field arrives, this is the only
+ * place that has to change.
+ */
+export function spbuImageUrl(_item: Pick<SpbuSearchItem, "kodeSpbu">): string {
+  return SPBU_IMAGE_FALLBACK;
 }

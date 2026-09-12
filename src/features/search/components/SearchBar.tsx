@@ -1,6 +1,7 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { useCallback, useId, useRef, useState } from "react";
 import { isApiError, type SearchEngineKind } from "@/api";
 import { Icon, Input, Spinner } from "@/components/ui";
+import { useClickOutside } from "@/hooks/useClickOutside";
 import { cn } from "@/lib/utils";
 import { ImageValidationError, useImageSearch } from "../hooks/useImageSearch";
 import { useSpbuSuggestions } from "../hooks/useSpbuSuggestions";
@@ -33,13 +34,10 @@ export function SearchBar({ keyword, engine, onSubmit }: Props) {
     setDraft(keyword);
   }
 
-  useEffect(() => {
-    const handlePointerDown = (event: MouseEvent) => {
-      if (!containerRef.current?.contains(event.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", handlePointerDown);
-    return () => document.removeEventListener("mousedown", handlePointerDown);
-  }, []);
+  useClickOutside(
+    containerRef,
+    useCallback(() => setOpen(false), []),
+  );
 
   const submit = (value: string, nextEngine?: SearchEngineKind) => {
     setOpen(false);

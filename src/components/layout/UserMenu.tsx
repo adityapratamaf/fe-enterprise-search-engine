@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Icon, Spinner } from "@/components/ui";
 import { ROUTES } from "@/config/routes";
-import { useAuth } from "@/features/auth/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 /**
  * Replaces the previous decorative pair of buttons: a hardcoded "AP" avatar and

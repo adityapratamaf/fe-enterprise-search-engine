@@ -1,14 +1,6 @@
 import type { SearchCapabilities } from "@/api";
 import { Icon } from "@/components/ui";
-
-const CAPABILITY_LABELS: { key: keyof SearchCapabilities; label: string }[] = [
-  { key: "fuzzy", label: "Toleransi salah ketik" },
-  { key: "relevansi", label: "Peringkat relevansi" },
-  { key: "highlight", label: "Penyorotan kata" },
-  { key: "sinonim", label: "Sinonim alamat" },
-  { key: "facet", label: "Hitungan filter" },
-  { key: "geo", label: "Filter jarak" },
-];
+import { CAPABILITY_LABELS } from "../data";
 
 /**
  * Surfaces `kemampuan` and `catatan`, which the backend sends precisely so the UI

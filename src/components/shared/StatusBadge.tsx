@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui";
-import { humanizeEnum } from "@/lib/format";
+import { humanizeEnum } from "@/utils/format";
 
 /**
  * Renders the backend's `status` string as-is rather than inventing copy: the

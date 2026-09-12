@@ -1,11 +1,8 @@
 import { useMemo, useState } from "react";
 import type { FacetBucket } from "@/api";
 import { Checkbox, Icon, Input } from "@/components/ui";
-import { formatCount } from "@/lib/format";
-
-const COLLAPSED_LIMIT = 6;
-/** Below this, a per-group search box is more noise than help. */
-const SEARCHABLE_THRESHOLD = 8;
+import { formatCount } from "@/utils/format";
+import { FACET_COLLAPSED_LIMIT, FACET_SEARCHABLE_THRESHOLD } from "../data";
 
 type Props = {
   title: string;
@@ -31,7 +28,7 @@ export function FacetGroup({
   const [showAll, setShowAll] = useState(false);
   const [query, setQuery] = useState("");
 
-  const searchable = buckets.length >= SEARCHABLE_THRESHOLD;
+  const searchable = buckets.length >= FACET_SEARCHABLE_THRESHOLD;
 
   const matched = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -45,7 +42,7 @@ export function FacetGroup({
    */
   const visible = useMemo(() => {
     if (showAll) return matched;
-    const head = matched.slice(0, COLLAPSED_LIMIT);
+    const head = matched.slice(0, FACET_COLLAPSED_LIMIT);
     const missingSelected = matched.filter(
       (bucket) => selected.includes(bucket.nilai) && !head.includes(bucket),
     );
@@ -129,7 +126,7 @@ export function FacetGroup({
               Tampilkan {formatCount(hidden)} lainnya
             </button>
           )}
-          {showAll && matched.length > COLLAPSED_LIMIT && (
+          {showAll && matched.length > FACET_COLLAPSED_LIMIT && (
             <button
               type="button"
               onClick={() => setShowAll(false)}

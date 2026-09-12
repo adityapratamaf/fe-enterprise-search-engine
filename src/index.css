@@ -50,3 +50,83 @@
     background: transparent;
   }
 }
+
+@layer components {
+  /* Staggered fade-in for result rows. Was framer-motion, which cost ~100 kB on
+     the app's main screen for this one effect; the delay is set per row inline.
+     Unlike the library version, this honours prefers-reduced-motion. */
+  @keyframes result-enter {
+    from {
+      opacity: 0;
+      transform: translateY(7px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .result-enter {
+    animation: result-enter 300ms ease-out both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .result-enter {
+      animation: none;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Leaflet
+   Markers and clusters are divIcons, so their look lives here rather than in
+   image assets. Leaflet's own stylesheet is imported in main.tsx.
+   --------------------------------------------------------------------------- */
+@layer components {
+  .leaflet-container {
+    @apply font-sans;
+    background: theme("colors.surface.sunken");
+  }
+
+  /* Leaflet's panes sit at z-index 400-700; keep them under the app's sticky
+     header (z-50 in a separate stacking context) and our own overlays. */
+  .leaflet-pane,
+  .leaflet-top,
+  .leaflet-bottom {
+    z-index: 400;
+  }
+
+  .spbu-marker__pin {
+    @apply block rounded-full border-2 border-white shadow-md transition-transform;
+    background: var(--pin-color);
+  }
+
+  .spbu-marker__pin--selected {
+    @apply ring-2 ring-brand-500 ring-offset-2;
+    transform: scale(1.05);
+  }
+
+  .spbu-cluster__bubble {
+    @apply grid h-full w-full place-items-center rounded-full border-2 border-white bg-brand-600/90 text-xs font-bold text-white shadow-md;
+  }
+
+  .spbu-cluster__bubble.cluster-md {
+    @apply bg-brand-700/90 text-sm;
+  }
+
+  .spbu-cluster__bubble.cluster-lg {
+    @apply bg-brand-800/90 text-sm;
+  }
+
+  .leaflet-popup-content-wrapper {
+    @apply rounded-xl border border-line-200 shadow-overlay;
+  }
+
+  .leaflet-popup-content {
+    @apply m-0 px-3 py-2 text-[11px] leading-5 text-ink-700;
+  }
+
+  .leaflet-popup-content strong {
+    @apply text-[12px] text-brand-600;
+  }
+}

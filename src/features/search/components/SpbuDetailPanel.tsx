@@ -10,10 +10,10 @@ import {
   formatRating,
   googleMapsDirectionsUrl,
   humanizeEnum,
-} from "@/lib/format";
-import { spbuImageUrl } from "../lib/spbuImage";
-import { facilityIcon, isOpen24Hours } from "../lib/taxonomy";
-import { PreviewMap } from "./PreviewMap";
+} from "@/utils/format";
+import { spbuImageUrl } from "../utils";
+import { facilityIcon, isOpen24Hours } from "../utils";
+import { MapPanel } from "./MapPanel";
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
@@ -31,10 +31,15 @@ function DetailRow({ label, value }: { label: string; value: string }) {
  */
 export function SpbuDetailPanel({
   item,
+  items,
   isLoading,
+  onSelect,
 }: {
   item: SpbuSearchItem | null;
+  /** Everything on the current page, so the map shows the same set as the list. */
+  items: SpbuSearchItem[];
   isLoading: boolean;
+  onSelect: (kode: string) => void;
 }) {
   if (isLoading && !item) {
     return (
@@ -71,7 +76,7 @@ export function SpbuDetailPanel({
   return (
     <Card className="overflow-hidden lg:sticky lg:top-[70px]">
       <CardBody className="p-2">
-        <PreviewMap latitude={item.latitude} longitude={item.longitude} nama={item.nama} />
+        <MapPanel items={items} selected={item} onSelect={onSelect} />
 
         <div className="mt-2 overflow-hidden rounded-lg border border-line-200">
           <img

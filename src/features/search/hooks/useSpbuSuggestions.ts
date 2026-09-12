@@ -1,34 +1,20 @@
-import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { spbuApi } from "@/api";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { SUGGESTION_DEBOUNCE_MS, SUGGESTION_LIMIT, SUGGESTION_MIN_LENGTH } from "../data";
 import { spbuKeys } from "./useSpbuSearch";
 
-/** The backend itself ignores anything shorter, so there is no point asking. */
-const MIN_LENGTH = 2;
-const DEBOUNCE_MS = 250;
-
-function useDebounced<T>(value: T, delayMs: number): T {
-  const [debounced, setDebounced] = useState(value);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setDebounced(value), delayMs);
-    return () => clearTimeout(timer);
-  }, [value, delayMs]);
-
-  return debounced;
-}
-
 /**
- * Suggestions are fired per keystroke, so the input is debounced and results are
- * cached per term — the previous UI filtered a hardcoded array of five strings.
+ * Suggestions fire per keystroke, so the term is debounced and results are cached
+ * per term — the original UI filtered a hardcoded array of five strings.
  */
 export function useSpbuSuggestions(keyword: string, enabled: boolean) {
-  const debounced = useDebounced(keyword.trim(), DEBOUNCE_MS);
-  const active = enabled && debounced.length >= MIN_LENGTH;
+  const debounced = useDebouncedValue(keyword.trim(), SUGGESTION_DEBOUNCE_MS);
+  const active = enabled && debounced.length >= SUGGESTION_MIN_LENGTH;
 
   const query = useQuery({
     queryKey: spbuKeys.suggestion(debounced),
-    queryFn: ({ signal }) => spbuApi.suggestion(debounced, 8, signal),
+    queryFn: ({ signal }) => spbuApi.suggestion(debounced, SUGGESTION_LIMIT, signal),
     enabled: active,
     staleTime: 5 * 60_000,
   });

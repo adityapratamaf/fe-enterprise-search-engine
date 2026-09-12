@@ -2,13 +2,13 @@ import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import type { FacetKey, SearchEngineKind } from "@/api";
 import {
+  countActiveFilters,
   emptyFilters,
   readSearchState,
-  writeSearchState,
   toSearchRequest,
-  countActiveFilters,
-  type SearchState,
-} from "../lib/searchParams";
+  writeSearchState,
+} from "../utils";
+import type { SearchState } from "../types";
 
 /**
  * Reads and writes the whole search state through the URL. Every mutation that

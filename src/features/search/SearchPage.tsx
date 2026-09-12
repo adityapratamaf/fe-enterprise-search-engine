@@ -1,34 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import type { SpbuSearchItem } from "@/api";
 import { FilterSidebar } from "./components/FilterSidebar";
 import { ResultsPanel } from "./components/ResultsPanel";
 import { SearchHero } from "./components/SearchHero";
 import { SpbuDetailPanel } from "./components/SpbuDetailPanel";
 import { useSearchState } from "./hooks/useSearchState";
 import { useSpbuSearch } from "./hooks/useSpbuSearch";
-
-/**
- * Builds a facet-code → display-name map from the result items. Facet buckets
- * carry codes only, while each item ships a parallel `*Nama` array, so the names
- * are learned from whatever is on screen and `prettifyCode` covers the rest.
- */
-function buildLabelMap(items: SpbuSearchItem[]): Record<string, string> {
-  const labels: Record<string, string> = {};
-
-  for (const item of items) {
-    item.produk.forEach((code, index) => {
-      const name = item.produkNama[index];
-      if (name) labels[code] = name;
-    });
-    item.fasilitas.forEach((code, index) => {
-      const name = item.fasilitasNama[index];
-      if (name) labels[code] = name;
-    });
-    if (item.regional && item.regionalNama) labels[item.regional] = item.regionalNama;
-  }
-
-  return labels;
-}
+import { buildLabelMap } from "./utils";
 
 /**
  * Orchestration only: URL state in, query out, three panels rendered. The page it
@@ -104,7 +81,12 @@ export function SearchPage() {
           onRetry={() => void refetch()}
         />
 
-        <SpbuDetailPanel item={selected} isLoading={isLoading} />
+        <SpbuDetailPanel
+          item={selected}
+          items={items}
+          isLoading={isLoading}
+          onSelect={setSelectedKode}
+        />
       </div>
     </div>
   );

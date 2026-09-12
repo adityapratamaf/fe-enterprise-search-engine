@@ -1,15 +1,6 @@
 import type { SearchEngineKind } from "@/api";
-import { SPBU_IMAGE_FALLBACK } from "../lib/spbuImage";
+import { EXAMPLE_QUERIES, SPBU_IMAGE_FALLBACK } from "../data";
 import { SearchBar } from "./SearchBar";
-
-/** Example queries offered under the search box. */
-const EXAMPLE_QUERIES = [
-  "Pertamax",
-  "SPBU Jakarta Selatan",
-  "Jl Sudirman",
-  "Pertalite",
-  "Musholla",
-];
 
 type Props = {
   keyword: string;

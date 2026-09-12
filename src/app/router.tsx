@@ -35,7 +35,7 @@ export const router = createBrowserRouter([
           },
           {
             path: ROUTES.map,
-            lazy: async () => ({ Component: (await import("@/features/misc/MapPage")).MapPage }),
+            lazy: async () => ({ Component: (await import("@/features/map/MapPage")).MapPage }),
           },
           {
             path: ROUTES.benchmark,

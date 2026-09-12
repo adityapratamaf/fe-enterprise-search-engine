@@ -17,7 +17,7 @@ import {
   type ModulePermission,
   type UserResponse,
 } from "@/api";
-import { hasPermission } from "./permissions";
+import { hasPermission } from "@/features/auth/utils";
 
 type AuthState = {
   user: UserResponse | null;

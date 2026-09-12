@@ -1,6 +1,7 @@
 import { FACET_KEYS, type FacetBucket, type FacetKey, type SearchCapabilities } from "@/api";
 import { Icon, Skeleton } from "@/components/ui";
-import { FACET_LABELS, prettifyCode } from "../lib/taxonomy";
+import { FACET_LABELS } from "../data";
+import { prettifyCode } from "../utils";
 import { FacetGroup } from "./FacetGroup";
 
 type Props = {

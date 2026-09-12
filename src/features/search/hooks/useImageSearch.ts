@@ -1,8 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { spbuApi } from "@/api";
-
-const MAX_BYTES = 10 * 1024 * 1024;
-const ACCEPTED = ["image/png", "image/jpeg"];
+import { IMAGE_ACCEPTED_TYPES, IMAGE_MAX_BYTES } from "../data";
 
 export class ImageValidationError extends Error {}
 
@@ -15,10 +13,10 @@ export class ImageValidationError extends Error {}
 export function useImageSearch() {
   return useMutation({
     mutationFn: async (file: File) => {
-      if (!ACCEPTED.includes(file.type)) {
+      if (!IMAGE_ACCEPTED_TYPES.includes(file.type)) {
         throw new ImageValidationError("Hanya berkas PNG atau JPEG yang didukung.");
       }
-      if (file.size > MAX_BYTES) {
+      if (file.size > IMAGE_MAX_BYTES) {
         throw new ImageValidationError("Ukuran gambar melebihi batas 10 MB.");
       }
 

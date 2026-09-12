@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { isApiError } from "@/api";
 import { Button, Icon, Input, Spinner } from "@/components/ui";
 import { ROUTES } from "@/config/routes";
-import { useAuth } from "./AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 type RedirectState = { from?: { pathname?: string } };
 

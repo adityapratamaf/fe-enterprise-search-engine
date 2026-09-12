@@ -1,26 +1,11 @@
-import { ApiError, SORT_FIELDS, type SearchSpbuResponse, type SpbuSearchItem } from "@/api";
+import { ApiError, type SearchSpbuResponse, type SpbuSearchItem } from "@/api";
 import { Button, Card, CardBody, Icon, Select, Skeleton, Spinner } from "@/components/ui";
-import { formatCount, formatSeconds } from "@/lib/format";
+import { formatCount, formatSeconds } from "@/utils/format";
+import { RESULT_STAGGER_SECONDS, SORT_OPTIONS } from "../data";
+import { parseSortValue, toSortValue } from "../utils";
 import { EngineNotice } from "./EngineNotice";
 import { Pagination } from "./Pagination";
 import { SpbuResultCard } from "./SpbuResultCard";
-
-/** `value` encodes both the field and the direction as one select option. */
-const SORT_OPTIONS: { value: string; label: string }[] = [
-  { value: "", label: "Relevansi" },
-  { value: "nama:asc", label: "Nama A - Z" },
-  { value: "nama:desc", label: "Nama Z - A" },
-  { value: "rating:desc", label: "Rating tertinggi" },
-  { value: "jarak:asc", label: "Jarak terdekat" },
-  { value: "nozzle:desc", label: "Nozzle terbanyak" },
-  { value: "kode:asc", label: "Kode menaik" },
-];
-
-function parseSortValue(value: string): { sortBy: string; isDescending: boolean } {
-  const [field = "", direction] = value.split(":");
-  const isKnown = (SORT_FIELDS as readonly string[]).includes(field);
-  return { sortBy: isKnown ? field : "", isDescending: direction === "desc" };
-}
 
 type Props = {
   data: SearchSpbuResponse | undefined;
@@ -51,7 +36,7 @@ export function ResultsPanel({
   onPageChange,
   onRetry,
 }: Props) {
-  const sortValue = sortBy ? `${sortBy}:${isDescending ? "desc" : "asc"}` : "";
+  const sortValue = toSortValue(sortBy, isDescending);
   const from = data && data.totalCount > 0 ? (data.pageNumber - 1) * data.pageSize + 1 : 0;
   const to = data ? Math.min(data.pageNumber * data.pageSize, data.totalCount) : 0;
 
@@ -135,13 +120,18 @@ export function ResultsPanel({
           </ul>
         ) : data && data.items.length > 0 ? (
           <div className="px-3">
-            {data.items.map((item) => (
-              <SpbuResultCard
+            {data.items.map((item, index) => (
+              <div
                 key={item.id}
-                item={item}
-                selected={item.kodeSpbu === selectedKode}
-                onSelect={onSelect}
-              />
+                className="result-enter"
+                style={{ animationDelay: `${index * RESULT_STAGGER_SECONDS}s` }}
+              >
+                <SpbuResultCard
+                  item={item}
+                  selected={item.kodeSpbu === selectedKode}
+                  onSelect={onSelect}
+                />
+              </div>
             ))}
           </div>
         ) : (
