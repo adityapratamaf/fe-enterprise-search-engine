@@ -14,7 +14,7 @@ vi.mock("./components/MapPanel", () => ({
   MapPanel: () => <div data-testid="map-panel" />,
 }));
 
-function renderPage(initialUrl = "/") {
+function renderPage(initialUrl = "/search") {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: 0 } },
   });
@@ -68,7 +68,7 @@ describe("SearchPage", () => {
   });
 
   it("reads the initial query from the URL", async () => {
-    renderPage("/?q=Denpasar");
+    renderPage("/search?q=Denpasar");
 
     expect(screen.getByRole("combobox", { name: /Cari SPBU/i })).toHaveValue("Denpasar");
 
@@ -79,7 +79,7 @@ describe("SearchPage", () => {
   });
 
   it("explains what the SQL engine cannot do", async () => {
-    renderPage("/?q=sudirman&engine=Sql");
+    renderPage("/search?q=sudirman&engine=Sql");
 
     await waitFor(() => {
       expect(screen.getByText(/Tidak tersedia pada mesin ini/i)).toBeInTheDocument();
@@ -87,7 +87,7 @@ describe("SearchPage", () => {
   });
 
   it("renders the empty state for a query with no matches", async () => {
-    renderPage("/?q=zzzzzqqq");
+    renderPage("/search?q=zzzzzqqq");
 
     await waitFor(() => {
       expect(screen.getByText(/SPBU tidak ditemukan/i)).toBeInTheDocument();

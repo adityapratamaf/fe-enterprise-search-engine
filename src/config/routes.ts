@@ -1,5 +1,5 @@
 export const ROUTES = {
-  search: "/",
+  search: "/search",
   map: "/map",
   analytics: "/analytics",
   benchmark: "/benchmark",

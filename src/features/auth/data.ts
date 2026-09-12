@@ -28,4 +28,4 @@ export const LOGIN_HIGHLIGHTS: LoginHighlight[] = [
 
 /** Same line as the header panel; kept in one place so they cannot drift. */
 export const LOGIN_TAGLINE = BRAND_TAGLINE;
-export const LOGIN_SPLASH_IMAGE = "/spbu-default.jpg";
+export const LOGIN_SPLASH_IMAGE = "/spbu-default.png";

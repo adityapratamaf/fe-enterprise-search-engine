@@ -30,7 +30,7 @@ export function PlaceholderPage({
             className="mt-6 inline-flex h-12 items-center gap-2 rounded-xl bg-brand-600 px-5 text-sm font-semibold text-white transition hover:bg-brand-700"
           >
             <Icon name="arrow-left-line" />
-            Kembali ke SPBU Search
+            Kembali ke Search
           </Link>
         </CardBody>
       </Card>

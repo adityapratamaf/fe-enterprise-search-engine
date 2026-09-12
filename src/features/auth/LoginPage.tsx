@@ -151,7 +151,7 @@ export function LoginPage() {
 
       <div className="relative hidden min-h-screen overflow-hidden lg:block">
         <img
-          src="/spbu-default.jpg"
+          src="/spbu-default.png"
           alt=""
           className="absolute inset-0 h-full w-full object-cover"
         />

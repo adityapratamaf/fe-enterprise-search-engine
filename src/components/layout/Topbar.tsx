@@ -43,7 +43,6 @@ export function Topbar({ onOpenNav }: { onOpenNav: () => void }) {
             <NavLink
               key={item.to}
               to={item.to}
-              end={item.to === ROUTES.search}
               className={({ isActive }) =>
                 cn(
                   "flex h-full items-center px-4 text-[13.5px] transition-colors",

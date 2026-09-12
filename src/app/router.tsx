@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { createBrowserRouter, redirect, type RouteObject } from "react-router-dom";
 import { ROUTES } from "@/config/routes";
 import { AppProviders } from "./AppProviders";
 import { RouteError } from "./RouteError";
@@ -11,12 +11,21 @@ import { RouteError } from "./RouteError";
  * No auth gate for now — the app is meant to be previewable without logging in.
  * `RequireAuth` is written and ready; wrapping the layout branch with it is all
  * that is needed to turn protection back on.
+ *
+ * Exported separately from the browser router so the same tree can be mounted in
+ * a memory router by tests.
  */
-export const router = createBrowserRouter([
+export const routes: RouteObject[] = [
   {
     element: <AppProviders />,
     errorElement: <RouteError />,
     children: [
+      /**
+       * "/" is no longer a page of its own. Redirecting from a loader rather
+       * than rendering `<Navigate>` means no component mounts just to bounce
+       * straight back out.
+       */
+      { index: true, loader: () => redirect(ROUTES.search) },
       {
         path: ROUTES.login,
         lazy: async () => ({ Component: (await import("@/features/auth/LoginPage")).LoginPage }),
@@ -28,7 +37,7 @@ export const router = createBrowserRouter([
         errorElement: <RouteError />,
         children: [
           {
-            index: true,
+            path: ROUTES.search,
             lazy: async () => ({
               Component: (await import("@/features/search/SearchPage")).SearchPage,
             }),
@@ -57,7 +66,9 @@ export const router = createBrowserRouter([
           },
         ],
       },
-      { path: "*", element: <Navigate to={ROUTES.search} replace /> },
+      { path: "*", loader: () => redirect(ROUTES.search) },
     ],
   },
-]);
+];
+
+export const router = createBrowserRouter(routes);

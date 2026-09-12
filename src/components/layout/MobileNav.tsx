@@ -2,7 +2,6 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { NavLink } from "react-router-dom";
 import { Icon } from "@/components/ui";
 import { NAV_ITEMS } from "@/config/navigation";
-import { ROUTES } from "@/config/routes";
 import { cn } from "@/lib/utils";
 
 export function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -31,7 +30,6 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
               <NavLink
                 key={item.to}
                 to={item.to}
-                end={item.to === ROUTES.search}
                 onClick={onClose}
                 className={({ isActive }) =>
                   cn(

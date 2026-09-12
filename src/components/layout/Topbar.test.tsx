@@ -33,7 +33,7 @@ describe("Topbar", () => {
 
     const nav = screen.getByRole("navigation", { name: /Navigasi utama/i });
     const active = within(nav).getByRole("link", { name: "Analitik" });
-    const inactive = within(nav).getByRole("link", { name: "Peta" });
+    const inactive = within(nav).getByRole("link", { name: "Map" });
 
     // NavLink sets aria-current on the matched route.
     expect(active).toHaveAttribute("aria-current", "page");
@@ -41,13 +41,18 @@ describe("Topbar", () => {
     expect(active.className).toContain("text-brand-600");
   });
 
-  it("keeps the index route from matching every path", () => {
-    renderTopbar("/analytics");
+  it("activates Search only on its own path", () => {
+    const nav = () => screen.getByRole("navigation", { name: /Navigasi utama/i });
 
-    const nav = screen.getByRole("navigation", { name: /Navigasi utama/i });
-    expect(within(nav).getByRole("link", { name: "SPBU Search" })).not.toHaveAttribute(
+    const { unmount } = renderTopbar("/search");
+    expect(within(nav()).getByRole("link", { name: "Search" })).toHaveAttribute(
       "aria-current",
+      "page",
     );
+    unmount();
+
+    renderTopbar("/analytics");
+    expect(within(nav()).getByRole("link", { name: "Search" })).not.toHaveAttribute("aria-current");
   });
 
   it("shows the notification bell with its badge", () => {

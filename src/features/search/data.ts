@@ -126,4 +126,4 @@ export const FALLBACK_FACILITY_ICON = "checkbox-circle-line";
 export const OPEN_24H_CODE = "BUKA_24_JAM";
 
 /** Shared station photo in `public/`, used until the API carries real images. */
-export const SPBU_IMAGE_FALLBACK = "/spbu-default.jpg";
+export const SPBU_IMAGE_FALLBACK = "/spbu-default.png";
