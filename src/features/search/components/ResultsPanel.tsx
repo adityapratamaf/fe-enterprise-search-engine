@@ -1,5 +1,5 @@
 import { ApiError, type SearchSpbuResponse, type SpbuSearchItem } from "@/api";
-import { Button, Card, Icon, Select, Skeleton, Spinner } from "@/components/ui";
+import { Button, Card, Dropdown, Icon, Skeleton, Spinner } from "@/components/ui";
 import { formatCount, formatSeconds } from "@/utils/format";
 import { RESULT_STAGGER_SECONDS, SORT_OPTIONS } from "../data";
 import { parseSortValue, toSortValue } from "../utils";
@@ -58,23 +58,19 @@ export function ResultsPanel({
           ) : null}
         </p>
 
-        <label className="flex shrink-0 items-center gap-2 text-[12px] text-ink-600">
+        <div className="flex shrink-0 items-center gap-2 text-[12px] text-ink-600">
           Urutkan:
-          <Select
+          <Dropdown
             value={sortValue}
-            onChange={(event) => {
-              const next = parseSortValue(event.target.value);
-              onSortChange(next.sortBy, next.isDescending);
+            options={SORT_OPTIONS}
+            onChange={(next) => {
+              const parsed = parseSortValue(next);
+              onSortChange(parsed.sortBy, parsed.isDescending);
             }}
-            className="h-8 min-w-[128px] text-[12px]"
-          >
-            {SORT_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </Select>
-        </label>
+            className="min-w-[144px]"
+            aria-label="Urutkan hasil pencarian"
+          />
+        </div>
       </div>
 
       {data && <EngineNotice capabilities={data.kemampuan} notes={data.catatan} />}

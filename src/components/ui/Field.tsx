@@ -1,9 +1,4 @@
-import {
-  forwardRef,
-  type InputHTMLAttributes,
-  type ReactNode,
-  type SelectHTMLAttributes,
-} from "react";
+import { forwardRef, type InputHTMLAttributes, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 const FRAME =
@@ -47,28 +42,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       />
       {trailing}
     </div>
-  );
-});
-
-export type SelectProps = Omit<SelectHTMLAttributes<HTMLSelectElement>, "size"> & {
-  selectSize?: keyof typeof FIELD_SIZES;
-};
-
-export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
-  { selectSize = "sm", className, ...props },
-  ref,
-) {
-  return (
-    <select
-      ref={ref}
-      className={cn(
-        "rounded-lg border border-line-300 bg-white px-2.5 text-ink-700 outline-none",
-        "focus:border-brand-400 focus:ring-4 focus:ring-brand-500/10",
-        FIELD_SIZES[selectSize].control,
-        className,
-      )}
-      {...props}
-    />
   );
 });
 
