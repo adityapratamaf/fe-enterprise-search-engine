@@ -34,6 +34,16 @@
   :focus-visible {
     @apply outline-none ring-2 ring-brand-500 ring-offset-1;
   }
+
+  /* Form controls opt out of the ring above: Chrome/Edge treat a mouse click
+     into a text input, textarea or checkbox as focus-visible too (not just
+     keyboard Tab), which painted a blue box on every click — not just on
+     keyboard navigation. Design calls for no visible box there at all. */
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    @apply outline-none ring-0 ring-offset-0;
+  }
 }
 
 @layer utilities {

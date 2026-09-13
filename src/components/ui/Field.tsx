@@ -2,7 +2,7 @@ import { forwardRef, type InputHTMLAttributes, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 const FRAME =
-  "flex items-center rounded-xl border border-line-400 bg-white transition focus-within:border-brand-400 focus-within:ring-4 focus-within:ring-brand-500/10";
+  "flex items-center rounded-xl border border-line-400 bg-white transition";
 
 const FIELD_SIZES = {
   sm: { frame: "px-2.5", control: "h-8 text-[11px]" },

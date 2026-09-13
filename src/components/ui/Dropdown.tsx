@@ -99,7 +99,7 @@ export function Dropdown({ value, options, onChange, size = "sm", className, ...
         onKeyDown={handleKeyDown}
         className={cn(
           "flex w-full items-center justify-between gap-2 rounded-lg border border-line-300 bg-white text-left text-ink-700 outline-none transition",
-          "hover:border-line-400 focus:border-brand-400 focus:ring-4 focus:ring-brand-500/10",
+          "hover:border-line-400",
           sizes.control,
         )}
       >
