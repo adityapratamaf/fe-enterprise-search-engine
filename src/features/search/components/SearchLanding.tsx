@@ -45,17 +45,17 @@ export function SearchLanding({
           detail SPBU akan muncul setelah pencarian dijalankan.
         </p>
 
-        <ul className="mt-8 grid gap-4 text-left sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-6 grid gap-3 text-left sm:grid-cols-2 lg:grid-cols-4">
           {LANDING_FEATURES.map((feature) => (
             <li
               key={feature.title}
-              className="rounded-xl2 border border-line-200 bg-white p-4 shadow-soft"
+              className="rounded-xl border border-line-200 bg-white p-3 shadow-soft"
             >
-              <span className={`grid h-10 w-10 place-items-center rounded-xl ${feature.tone}`}>
-                <Icon name={feature.icon} className="text-xl" />
+              <span className={`grid h-8 w-8 place-items-center rounded-lg ${feature.tone}`}>
+                <Icon name={feature.icon} className="text-base" />
               </span>
-              <h3 className="mt-3 text-[13.5px] font-bold text-ink-900">{feature.title}</h3>
-              <p className="mt-1.5 text-[12px] leading-5 text-ink-500">{feature.body}</p>
+              <h3 className="mt-2 text-[13px] font-bold text-ink-900">{feature.title}</h3>
+              <p className="mt-1 text-[11.5px] leading-[1.35] text-ink-500">{feature.body}</p>
             </li>
           ))}
         </ul>
