@@ -1,4 +1,5 @@
 import type { FacetKey, SearchEngineKind } from "@/api";
+import type { MapBounds } from "@/types/map";
 
 /**
  * The whole search screen's state. It is serialised into the URL, so a result
@@ -14,6 +15,8 @@ export type SearchState = {
   ratingMin: number | undefined;
   ulasanMin: number | undefined;
   filters: SearchFilters;
+  /** Viewport filter behind "Cari di area peta ini"; null when switched off. */
+  bounds: MapBounds | null;
 };
 
 /** Selected facet values, keyed by facet. OR within a key, AND across keys. */

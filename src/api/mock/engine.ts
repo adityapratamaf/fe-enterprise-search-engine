@@ -307,6 +307,18 @@ export function runMockSearch(params: SearchSpbuParams): SearchSpbuResponse {
   const hasCoordinates =
     params.lat !== undefined && params.lon !== undefined && params.radiusKm !== undefined;
 
+  const hasBounds =
+    params.latMin !== undefined &&
+    params.lonMin !== undefined &&
+    params.latMax !== undefined &&
+    params.lonMax !== undefined;
+
+  if (hasBounds && !capabilities.geo) {
+    catatan.push("Penyaring area peta diabaikan: mesin SQL tidak mendukung batas koordinat.");
+  }
+
+  const boundsActive = hasBounds && capabilities.geo;
+
   if (hasCoordinates && !capabilities.geo) {
     catatan.push("Penyaring jarak diabaikan: mesin SQL tidak mendukung pencarian radius.");
   }
@@ -331,6 +343,16 @@ export function runMockSearch(params: SearchSpbuParams): SearchSpbuResponse {
       : null;
 
     if (geoActive && jarakKm !== null && jarakKm > params.radiusKm!) continue;
+
+    if (
+      boundsActive &&
+      (item.latitude < params.latMin! ||
+        item.latitude > params.latMax! ||
+        item.longitude < params.lonMin! ||
+        item.longitude > params.lonMax!)
+    ) {
+      continue;
+    }
 
     scored.push({ item, score: match.score, fields: match.fields, jarakKm });
   }

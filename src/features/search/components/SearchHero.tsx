@@ -14,35 +14,33 @@ export function SearchHero({ keyword, engine, onSubmit }: Props) {
       aria-labelledby="search-heading"
       className="relative overflow-hidden border-b border-line-200 bg-surface-accent"
     >
-      {/* Decorative backdrop: tinted wash, station photo on the right, then a
-          second wash so the heading and search box stay legible over it. */}
+      {/* Decorative backdrop. Order matters: the tinted ground is the section's
+          own background, the photo sits on the right, and the wash above it is
+          wider than the photo so its left edge dissolves completely instead of
+          cutting off behind the heading. */}
       <div
         aria-hidden
-        className="absolute inset-0 bg-gradient-to-r from-surface-accent via-surface-accent/95 to-surface-accent/20"
-      />
-      <div
-        aria-hidden
-        className="absolute inset-y-0 right-0 hidden w-[48%] bg-cover bg-center opacity-70 md:block"
+        className="absolute inset-y-0 right-0 hidden w-[44%] bg-cover bg-center opacity-80 md:block"
         style={{ backgroundImage: `url(${SPBU_IMAGE_FALLBACK})` }}
       />
       <div
         aria-hidden
-        className="absolute inset-y-0 right-0 hidden w-[58%] bg-gradient-to-l from-transparent via-surface-accent/25 to-surface-accent md:block"
+        className="absolute inset-y-0 right-0 hidden w-[56%] bg-gradient-to-l from-transparent via-surface-accent/75 to-surface-accent md:block"
       />
 
-      <div className="relative mx-auto max-w-[1540px] px-4 pb-5 pt-5 sm:px-6 lg:px-8 lg:pb-6 lg:pt-4">
+      <div className="relative mx-auto max-w-[1540px] px-4 pb-6 pt-7 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-[930px] text-center">
           <h1
             id="search-heading"
-            className="text-[24px] font-bold tracking-[-0.6px] text-ink-900 sm:text-[27px]"
+            className="text-[26px] font-bold tracking-[-0.6px] text-ink-900 sm:text-[29px]"
           >
             Temukan SPBU di Seluruh Indonesia
           </h1>
-          <p className="mt-1 text-sm text-ink-600">
+          <p className="mt-1.5 text-[13.5px] text-ink-600">
             Cari berdasarkan nama, alamat, kota, provinsi, produk, fasilitas dan lainnya
           </p>
 
-          <div className="mt-4">
+          <div className="mt-5">
             <SearchBar keyword={keyword} engine={engine} onSubmit={onSubmit} />
           </div>
 

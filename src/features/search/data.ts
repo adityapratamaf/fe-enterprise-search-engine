@@ -15,6 +15,8 @@ export const QUERY_KEYS = {
   desc: "desc",
   ratingMin: "rating",
   ulasanMin: "ulasan",
+  /** "latMin,lonMin,latMax,lonMax" — one key keeps the URL readable. */
+  bounds: "area",
 } as const;
 
 export const DEFAULT_PAGE_SIZE = 10;
@@ -104,6 +106,18 @@ export const CAPABILITY_LABELS: { key: keyof SearchCapabilities; label: string }
 // ---------------------------------------------------------------------------
 // Taxonomy
 // ---------------------------------------------------------------------------
+
+/** Regional codes and names, matching the backend's `RegionalSeeder`. */
+export const REGIONAL_NAMES: Record<string, string> = {
+  SUMBAGUT: "Sumatera Bagian Utara",
+  SUMBAGSEL: "Sumatera Bagian Selatan",
+  JBB: "Jawa Bagian Barat",
+  JBT: "Jawa Bagian Tengah",
+  JATIMBALINUS: "Jawa Timur, Bali & Nusa Tenggara",
+  KALIMANTAN: "Kalimantan",
+  SULAWESI: "Sulawesi",
+  PAPUAMALUKU: "Papua & Maluku",
+};
 
 /** Facility codes seeded by the backend's `FasilitasSeeder`. */
 export const FACILITY_ICONS: Record<string, string> = {

@@ -62,9 +62,17 @@ describe("SearchPage", () => {
     renderPage();
     await findResultCards();
 
-    expect(screen.getByRole("button", { name: /Provinsi/i })).toBeInTheDocument();
-    // A count next to a facet value proves the buckets came from the response.
-    expect(screen.getByText("DKI Jakarta")).toBeInTheDocument();
+    // Scoped to the sidebar: province names also appear in the detail panel, so
+    // an unscoped query matches twice and proves nothing about the facets.
+    const sidebar = screen.getByRole("complementary", { name: /Filter pencarian/i });
+
+    expect(within(sidebar).getByRole("button", { name: /Provinsi/i })).toBeInTheDocument();
+    const option = within(sidebar).getByText("DKI Jakarta");
+    expect(option).toBeInTheDocument();
+
+    // The count beside the value is what shows the buckets came from the response.
+    const row = option.closest("label");
+    expect(row?.textContent).toMatch(/DKI Jakarta\s*\d+/);
   });
 
   it("reads the initial query from the URL", async () => {

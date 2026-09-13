@@ -7,6 +7,8 @@ const VARIANTS = {
   ghost: "bg-transparent text-brand-800 hover:bg-brand-50",
   outline: "border border-line-400 bg-white text-brand-800 hover:bg-brand-50",
   danger: "bg-danger-500 text-white hover:bg-danger-600",
+  /** White chip that floats over imagery or a map, where borders read poorly. */
+  floating: "bg-white/95 text-ink-700 shadow-md backdrop-blur hover:bg-white",
 } as const;
 
 const SIZES = {
@@ -15,6 +17,10 @@ const SIZES = {
   lg: "h-12 gap-2 px-5 text-sm",
   /** Square, for icon-only buttons. Always pass an aria-label with this. */
   icon: "h-8 w-8 justify-center p-0 text-base",
+  /** Slightly larger square, for controls layered over a map. */
+  "icon-lg": "h-9 w-9 justify-center p-0 text-lg",
+  /** Compact pill used for map overlays and inline links. */
+  pill: "h-7 gap-1.5 px-3 text-[11px]",
 } as const;
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {

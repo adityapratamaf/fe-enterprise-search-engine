@@ -5,6 +5,7 @@ import { useClickOutside } from "@/hooks/useClickOutside";
 import { cn } from "@/lib/utils";
 import { ImageValidationError, useImageSearch } from "../hooks/useImageSearch";
 import { useSpbuSuggestions } from "../hooks/useSpbuSuggestions";
+import { EngineButton } from "./EngineButton";
 
 type Props = {
   keyword: string;
@@ -95,8 +96,10 @@ export function SearchBar({ keyword, engine, onSubmit }: Props) {
 
   return (
     <div className="w-full" ref={containerRef}>
-      <div className="relative flex w-full flex-col gap-2 md:flex-row md:items-stretch">
-        <div className="min-w-0 flex-1">
+      <div className="flex w-full flex-col gap-2.5 md:flex-row md:items-start">
+        {/* Relative here, not on the row: the suggestion list anchors to the
+            input alone, so it cannot stretch under the engine buttons. */}
+        <div className="relative min-w-0 flex-1">
           <Input
             // Not type="search": that adds a native clear button beside ours.
             type="text"
@@ -117,7 +120,9 @@ export function SearchBar({ keyword, engine, onSubmit }: Props) {
             }}
             onFocus={() => setOpen(true)}
             onKeyDown={handleKeyDown}
-            frameClassName="h-11 shadow-sm"
+            inputSize="lg"
+            frameClassName="h-12 rounded-xl border-line-300 shadow-sm"
+            className="text-[13.5px]"
             leading={<Icon name="search-line" className="ml-1 text-xl text-ink-500" />}
             trailing={
               draft ? (
@@ -127,19 +132,62 @@ export function SearchBar({ keyword, engine, onSubmit }: Props) {
                     setDraft("");
                     submit("");
                   }}
-                  className="rounded-lg p-1.5 text-ink-500 hover:bg-surface-sunken"
+                  className="rounded-lg p-1.5 text-ink-500 transition hover:bg-surface-sunken"
                   aria-label="Hapus pencarian"
                 >
-                  <Icon name="close-line" />
+                  <Icon name="close-line" className="text-lg" />
                 </button>
               ) : null
             }
           />
+
+          {showSuggestions && (
+            <ul
+              id={listboxId}
+              role="listbox"
+              aria-label="Saran pencarian"
+              className="absolute left-0 right-0 top-[calc(100%+6px)] z-50 overflow-hidden rounded-xl border border-line-200 bg-white p-1 text-left shadow-overlay"
+            >
+              {isLoading && items.length === 0 ? (
+                <li className="flex items-center gap-2 px-3 py-2.5 text-sm text-ink-500">
+                  <Spinner size="sm" /> Mencari saran...
+                </li>
+              ) : (
+                items.map((item, index) => (
+                  <li
+                    key={item.kodeSpbu}
+                    id={`${listboxId}-option-${index}`}
+                    role="option"
+                    aria-selected={index === activeIndex}
+                  >
+                    <button
+                      type="button"
+                      onMouseEnter={() => setActiveIndex(index)}
+                      onClick={() => {
+                        setDraft(item.nama);
+                        submit(item.nama);
+                      }}
+                      className={cn(
+                        "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-ink-700",
+                        index === activeIndex ? "bg-brand-50" : "hover:bg-surface-sunken",
+                      )}
+                    >
+                      <Icon name="search-line" className="shrink-0 text-ink-500" />
+                      <span className="min-w-0 flex-1 truncate">{item.nama}</span>
+                      <span className="shrink-0 text-[11px] text-ink-400">
+                        {item.kota}, {item.provinsi}
+                      </span>
+                    </button>
+                  </li>
+                ))
+              )}
+            </ul>
+          )}
         </div>
 
         <label
           className={cn(
-            "flex h-11 w-full shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border border-brand-200 bg-white text-brand-600 shadow-sm transition hover:border-brand-300 hover:bg-brand-50 md:w-12",
+            "flex h-12 w-full shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-300 bg-white text-brand-600 shadow-sm transition hover:border-brand-300 hover:bg-brand-50 md:w-12",
             imageSearch.isPending && "pointer-events-none opacity-70",
           )}
         >
@@ -147,7 +195,7 @@ export function SearchBar({ keyword, engine, onSubmit }: Props) {
           {imageSearch.isPending ? (
             <Spinner size="sm" label="Membaca gambar" />
           ) : (
-            <Icon name="camera-3-line" className="text-xl" />
+            <Icon name="camera-line" className="text-xl" />
           )}
           <input
             type="file"
@@ -162,84 +210,23 @@ export function SearchBar({ keyword, engine, onSubmit }: Props) {
           />
         </label>
 
-        <button
-          type="button"
+        <EngineButton
+          icon="search-line"
+          label="Cari dengan Elasticsearch"
+          hint="Pencarian cerdas, toleransi salah ketik"
+          active={engine === "Elasticsearch"}
           onClick={() => submit(draft, "Elasticsearch")}
-          aria-pressed={engine === "Elasticsearch"}
-          className={cn(
-            "h-11 w-full shrink-0 rounded-xl px-4 text-sm font-bold shadow-sm transition md:w-[230px]",
-            engine === "Elasticsearch"
-              ? "bg-brand-600 text-white hover:bg-brand-700"
-              : "border border-brand-200 bg-white text-brand-600 hover:bg-brand-50",
-          )}
-        >
-          <Icon name="search-line" className="mr-2" />
-          Cari dengan Elasticsearch
-          <span className="mt-0.5 block text-[9px] font-normal opacity-85">
-            Pencarian cerdas, toleransi salah ketik
-          </span>
-        </button>
+          className="w-full md:w-auto"
+        />
 
-        <button
-          type="button"
+        <EngineButton
+          icon="database-2-line"
+          label="Cari dengan SQL"
+          hint="Pencarian standar (LIKE)"
+          active={engine === "Sql"}
           onClick={() => submit(draft, "Sql")}
-          aria-pressed={engine === "Sql"}
-          className={cn(
-            "h-11 w-full shrink-0 rounded-xl border px-4 text-[12px] font-semibold shadow-sm transition md:w-[184px]",
-            engine === "Sql"
-              ? "border-brand-600 bg-brand-50 text-brand-600"
-              : "border-line-500 bg-white text-ink-800 hover:bg-brand-50",
-          )}
-        >
-          <Icon name="database-2-line" className="mr-1.5 text-lg" />
-          Cari dengan SQL
-          <span className="mt-0.5 block text-[9px] font-normal text-ink-500">
-            Pencarian standar (LIKE)
-          </span>
-        </button>
-
-        {showSuggestions && (
-          <ul
-            id={listboxId}
-            role="listbox"
-            aria-label="Saran pencarian"
-            className="absolute left-0 right-0 top-[calc(100%+4px)] z-50 overflow-hidden rounded-xl border border-line-200 bg-white p-1 shadow-overlay md:right-[430px]"
-          >
-            {isLoading && items.length === 0 ? (
-              <li className="flex items-center gap-2 px-3 py-2.5 text-sm text-ink-500">
-                <Spinner size="sm" /> Mencari saran...
-              </li>
-            ) : (
-              items.map((item, index) => (
-                <li
-                  key={item.kodeSpbu}
-                  id={`${listboxId}-option-${index}`}
-                  role="option"
-                  aria-selected={index === activeIndex}
-                >
-                  <button
-                    type="button"
-                    onMouseEnter={() => setActiveIndex(index)}
-                    onClick={() => {
-                      setDraft(item.nama);
-                      submit(item.nama);
-                    }}
-                    className={cn(
-                      "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-ink-700",
-                      index === activeIndex ? "bg-brand-50" : "hover:bg-surface-sunken",
-                    )}
-                  >
-                    <Icon name="search-line" className="shrink-0 text-ink-500" />
-                    <span className="min-w-0 flex-1 truncate">{item.nama}</span>
-                    <span className="shrink-0 text-[11px] text-ink-400">
-                      {item.kota}, {item.provinsi}
-                    </span>
-                  </button>
-                </li>
-              ))
-            )}
-          </ul>
-        )}
+          className="w-full md:w-auto"
+        />
       </div>
 
       {imageError && (

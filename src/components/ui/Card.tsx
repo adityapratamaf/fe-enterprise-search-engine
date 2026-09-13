@@ -1,13 +1,19 @@
-import type { HTMLAttributes, ReactNode } from "react";
+import type { ElementType, HTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-/**
- * Renders a plain `div`, not a `section`: the old `section` produced landmark
- * regions with no accessible name, nested inside each other.
- */
-export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+type CardProps = HTMLAttributes<HTMLElement> & {
+  /**
+   * Element to render. Defaults to `div` — a bare `section` would create a
+   * landmark with no accessible name, which is what the first version did and
+   * why it nested landmarks inside each other. Pass `aside`/`section` only
+   * together with an `aria-label`.
+   */
+  as?: ElementType;
+};
+
+export function Card({ as: Tag = "div", className, ...props }: CardProps) {
   return (
-    <div
+    <Tag
       className={cn("rounded-xl2 border border-line-200 bg-white shadow-card", className)}
       {...props}
     />

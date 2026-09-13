@@ -1,15 +1,16 @@
 import { FACET_KEYS, type FacetBucket, type FacetKey, type SearchCapabilities } from "@/api";
-import { Icon, Skeleton } from "@/components/ui";
+import { Card, Icon, Skeleton } from "@/components/ui";
 import { FACET_LABELS } from "../data";
+import type { SearchFilters } from "../types";
 import { prettifyCode } from "../utils";
 import { FacetGroup } from "./FacetGroup";
 
 type Props = {
   facets: Partial<Record<FacetKey, FacetBucket[]>> | null;
   capabilities: SearchCapabilities | undefined;
-  selected: Record<FacetKey, string[]>;
+  selected: SearchFilters;
   activeCount: number;
-  /** Code → display name, built from the result items' parallel `*Nama` arrays. */
+  /** Code to display name, built from the result items' parallel `*Nama` arrays. */
   labels: Record<string, string>;
   isLoading: boolean;
   onToggle: (key: FacetKey, value: string) => void;
@@ -18,7 +19,7 @@ type Props = {
 };
 
 /**
- * Driven entirely by the facet counts the backend returns. The previous version
+ * Driven entirely by the facet counts the backend returns. The original version
  * had no props at all: hardcoded groups, a remount hack for reset, and five dead
  * buttons for the groups it never implemented.
  */
@@ -37,15 +38,16 @@ export function FilterSidebar({
   const facetsUnsupported = capabilities !== undefined && !capabilities.facet;
 
   return (
-    <aside
+    <Card
+      as="aside"
       aria-label="Filter pencarian"
-      className="rounded-xl2 border border-line-200 bg-white p-3 shadow-soft lg:sticky lg:top-[70px] lg:max-h-[calc(100vh-84px)] lg:overflow-y-auto"
+      className="overflow-hidden lg:sticky lg:top-[70px] lg:max-h-[calc(100vh-84px)] lg:overflow-y-auto"
     >
-      <div className="flex items-center justify-between gap-2 border-b border-line-100 pb-3">
-        <h2 className="text-sm font-bold text-ink-900">
+      <div className="flex items-center justify-between gap-2 border-b border-line-100 px-3.5 py-3">
+        <h2 className="flex items-center gap-1.5 text-[13.5px] font-bold text-ink-900">
           Filter Pencarian
           {activeCount > 0 && (
-            <span className="ml-1.5 rounded-full bg-brand-600 px-1.5 py-0.5 text-[10px] font-bold text-white">
+            <span className="grid h-4 min-w-4 place-items-center rounded-full bg-brand-600 px-1 text-[9px] font-bold text-white">
               {activeCount}
             </span>
           )}
@@ -54,15 +56,15 @@ export function FilterSidebar({
           type="button"
           onClick={onReset}
           disabled={activeCount === 0}
-          className="text-xs font-semibold text-brand-600 disabled:opacity-40"
+          className="flex items-center gap-1 text-[12px] font-medium text-brand-600 transition hover:text-brand-700 disabled:opacity-40"
         >
-          <Icon name="refresh-line" className="mr-1" />
+          <Icon name="refresh-line" />
           Reset
         </button>
       </div>
 
       {facetsUnsupported ? (
-        <p className="flex gap-2 py-4 text-[11px] leading-5 text-ink-500">
+        <p className="flex gap-2 px-3.5 py-4 text-[11px] leading-5 text-ink-500">
           <Icon name="information-line" className="mt-0.5 shrink-0 text-brand-600" />
           <span>
             Mesin SQL tidak menghasilkan hitungan filter. Beralih ke Elasticsearch untuk memakai
@@ -70,7 +72,7 @@ export function FilterSidebar({
           </span>
         </p>
       ) : isLoading && !facets ? (
-        <div className="space-y-4 py-3">
+        <div className="space-y-4 px-3.5 py-4">
           {[0, 1, 2].map((group) => (
             <div key={group} className="space-y-2">
               <Skeleton className="h-3 w-24" />
@@ -95,6 +97,6 @@ export function FilterSidebar({
           />
         ))
       )}
-    </aside>
+    </Card>
   );
 }

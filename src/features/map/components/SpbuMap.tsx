@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import L from "leaflet";
 import { MapContainer, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import { useMapViewStore } from "@/stores/useMapViewStore";
@@ -64,17 +64,20 @@ function ViewController({
 }
 
 /**
- * The project's only real map. `PreviewMap`, the CSS-gradient placeholder it
- * replaces, drew invented markers and city labels over a fake background.
+ * The project's only real map. Leaflet's built-in zoom control is switched off
+ * so the overlay chrome in `MapControls` can own that corner; `renderOverlay`
+ * receives imperative handles bound to this map instance.
  */
 export function SpbuMap({
   markers,
   selectedKode = null,
+  focusKode = null,
   onSelect,
   onBoundsChange,
   rememberView = false,
   fitToMarkers = false,
   className,
+  renderOverlay,
 }: SpbuMapProps) {
   /**
    * Selected one field at a time. zustand v5 compares snapshots with Object.is
@@ -85,38 +88,65 @@ export function SpbuMap({
   const storedCenter = useMapViewStore((state) => state.center);
   const storedZoom = useMapViewStore((state) => state.zoom);
 
+  const [map, setMap] = useState<L.Map | null>(null);
+
   const selected = markers.find((marker) => marker.kodeSpbu === selectedKode) ?? null;
+  const focused = markers.find((marker) => marker.kodeSpbu === focusKode) ?? null;
+
+  /** Fit the whole set until the user picks a station to look at. */
+  const shouldFit = fitToMarkers && focusKode === null;
 
   const fitBounds = useMemo(() => {
-    if (!fitToMarkers || markers.length === 0) return null;
+    if (!shouldFit || markers.length === 0) return null;
     return L.latLngBounds(markers.map((marker) => marker.position));
-  }, [fitToMarkers, markers]);
+  }, [shouldFit, markers]);
 
   const initial = rememberView
     ? { center: storedCenter, zoom: storedZoom }
     : { center: DEFAULT_CENTER, zoom: DEFAULT_ZOOM };
 
+  const zoomIn = useCallback(() => map?.zoomIn(), [map]);
+  const zoomOut = useCallback(() => map?.zoomOut(), [map]);
+  const recenter = useCallback(() => {
+    if (!map) return;
+    if (selected) map.flyTo(selected.position, FOCUS_ZOOM, { duration: 0.6 });
+    else if (fitBounds) map.fitBounds(fitBounds, { padding: [40, 40], maxZoom: FOCUS_ZOOM });
+  }, [map, selected, fitBounds]);
+
   return (
-    <MapContainer
-      // `center`/`zoom` are only read on mount; later moves go through ViewController.
-      center={initial.center}
-      zoom={initial.zoom}
-      maxBounds={MAX_BOUNDS}
-      maxBoundsViscosity={0.6}
-      scrollWheelZoom
-      className={cn("h-full w-full", className)}
-    >
-      <TileLayer
-        url={TILE_LAYER.url}
-        attribution={TILE_LAYER.attribution}
-        maxZoom={TILE_LAYER.maxZoom}
-      />
-      <ClusterLayer markers={markers} selectedKode={selectedKode} onSelect={onSelect} />
-      <ViewController
-        selectedPosition={selected ? selected.position : null}
-        fitBounds={fitBounds}
-      />
-      <ViewReporter onBoundsChange={onBoundsChange} rememberView={rememberView} />
-    </MapContainer>
+    <div className={cn("relative h-full w-full", className)}>
+      <MapContainer
+        ref={setMap}
+        // `center`/`zoom` are only read on mount; later moves go through ViewController.
+        center={initial.center}
+        zoom={initial.zoom}
+        maxBounds={MAX_BOUNDS}
+        maxBoundsViscosity={0.6}
+        scrollWheelZoom
+        zoomControl={false}
+        attributionControl={false}
+        className="h-full w-full"
+      >
+        <TileLayer
+          url={TILE_LAYER.url}
+          attribution={TILE_LAYER.attribution}
+          maxZoom={TILE_LAYER.maxZoom}
+        />
+        <ClusterLayer markers={markers} selectedKode={selectedKode} onSelect={onSelect} />
+        <ViewController
+          selectedPosition={focused ? focused.position : null}
+          fitBounds={fitBounds}
+        />
+        <ViewReporter onBoundsChange={onBoundsChange} rememberView={rememberView} />
+      </MapContainer>
+
+      {renderOverlay?.({ zoomIn, zoomOut, recenter })}
+
+      {/* Attribution still has to appear; the default control is off so it can
+          sit unobtrusively rather than under the overlay chrome. */}
+      <span className="pointer-events-none absolute bottom-0 left-0 z-[450] bg-white/70 px-1 text-[8px] leading-tight text-ink-400">
+        © OpenStreetMap
+      </span>
+    </div>
   );
 }

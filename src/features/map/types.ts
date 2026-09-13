@@ -1,4 +1,5 @@
 import type { SpbuSearchItem } from "@/api";
+import type { ReactNode } from "react";
 import type { LatLng, MapBounds } from "@/types/map";
 
 /** Only what the map needs from a station, so markers do not carry whole documents. */
@@ -22,10 +23,23 @@ export function toMarker(item: SpbuSearchItem): SpbuMarker {
   };
 }
 
+/** Imperative handles the map hands to its overlay chrome. */
+export type MapHandles = {
+  zoomIn: () => void;
+  zoomOut: () => void;
+  recenter: () => void;
+};
+
 export type SpbuMapProps = {
   markers: SpbuMarker[];
-  /** Station to highlight and centre on, by code. */
+  /** Station drawn as the active pin, by code. */
   selectedKode?: string | null;
+  /**
+   * Station to fly to. Separate from `selectedKode` because the panel
+   * highlights the first result by default, and flying there on load would
+   * zoom past the overview the design shows.
+   */
+  focusKode?: string | null;
   onSelect?: (kode: string) => void;
   /** Fired after the user stops panning or zooming, for "search this area". */
   onBoundsChange?: (bounds: MapBounds) => void;
@@ -34,4 +48,6 @@ export type SpbuMapProps = {
   className?: string;
   /** Fit the viewport to all markers once they arrive. */
   fitToMarkers?: boolean;
+  /** Chrome drawn over the map, wired to the live Leaflet instance. */
+  renderOverlay?: (handles: MapHandles) => ReactNode;
 };

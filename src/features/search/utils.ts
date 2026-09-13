@@ -12,9 +12,11 @@ import {
   FACILITY_ICONS,
   FALLBACK_FACILITY_ICON,
   OPEN_24H_CODE,
+  REGIONAL_NAMES,
   QUERY_KEYS,
   SPBU_IMAGE_FALLBACK,
 } from "./data";
+import type { MapBounds } from "@/types/map";
 import type { SearchFilters, SearchState, SortSelection } from "./types";
 
 // ---------------------------------------------------------------------------
@@ -38,6 +40,21 @@ function parseNumber(value: string | null): number | undefined {
   return Number.isFinite(parsed) ? parsed : undefined;
 }
 
+/** Parses "latMin,lonMin,latMax,lonMax"; anything malformed disables the filter. */
+function parseBounds(value: string | null): MapBounds | null {
+  if (!value) return null;
+  const parts = value.split(",").map(Number);
+  if (parts.length !== 4 || parts.some((n) => !Number.isFinite(n))) return null;
+  const [latMin, lonMin, latMax, lonMax] = parts as [number, number, number, number];
+  return { latMin, lonMin, latMax, lonMax };
+}
+
+function serializeBounds(bounds: MapBounds): string {
+  return [bounds.latMin, bounds.lonMin, bounds.latMax, bounds.lonMax]
+    .map((n) => n.toFixed(5))
+    .join(",");
+}
+
 export function readSearchState(params: URLSearchParams): SearchState {
   const engine = params.get(QUERY_KEYS.engine);
 
@@ -54,6 +71,7 @@ export function readSearchState(params: URLSearchParams): SearchState {
     ratingMin: parseNumber(params.get(QUERY_KEYS.ratingMin)),
     ulasanMin: parseNumber(params.get(QUERY_KEYS.ulasanMin)),
     filters,
+    bounds: parseBounds(params.get(QUERY_KEYS.bounds)),
   };
 }
 
@@ -69,6 +87,8 @@ export function writeSearchState(state: SearchState): URLSearchParams {
   if (state.isDescending) params.set(QUERY_KEYS.desc, "1");
   if (state.ratingMin !== undefined) params.set(QUERY_KEYS.ratingMin, String(state.ratingMin));
   if (state.ulasanMin !== undefined) params.set(QUERY_KEYS.ulasanMin, String(state.ulasanMin));
+
+  if (state.bounds) params.set(QUERY_KEYS.bounds, serializeBounds(state.bounds));
 
   for (const key of FACET_KEYS) {
     for (const value of state.filters[key]) params.append(key, value);
@@ -100,6 +120,12 @@ export function toSearchRequest(state: SearchState): SearchSpbuParams {
   }
   if (state.ratingMin !== undefined) params.ratingMin = state.ratingMin;
   if (state.ulasanMin !== undefined) params.ulasanMin = state.ulasanMin;
+  if (state.bounds) {
+    params.latMin = state.bounds.latMin;
+    params.lonMin = state.bounds.lonMin;
+    params.latMax = state.bounds.latMax;
+    params.lonMax = state.bounds.lonMax;
+  }
 
   for (const key of FACET_KEYS) {
     const values = state.filters[key];
@@ -115,7 +141,10 @@ export function countActiveFilters(state: SearchState): number {
     0,
   );
   return (
-    facetCount + (state.ratingMin === undefined ? 0 : 1) + (state.ulasanMin === undefined ? 0 : 1)
+    facetCount +
+    (state.ratingMin === undefined ? 0 : 1) +
+    (state.ulasanMin === undefined ? 0 : 1) +
+    (state.bounds === null ? 0 : 1)
   );
 }
 
@@ -149,6 +178,12 @@ export function isOpen24Hours(fasilitas: string[]): boolean {
  * screen and this covers the rest.
  */
 export function prettifyCode(code: string): string {
+  // Only reshape values that actually look like codes. Facet values for
+  // provinsi and kota arrive as proper names already ("DKI Jakarta"), and
+  // lowercasing them produced "Dki jakarta".
+  if (REGIONAL_NAMES[code]) return REGIONAL_NAMES[code];
+  if (!/^[A-Z0-9_]+$/.test(code)) return code;
+
   return code
     .split("_")
     .map((part) => (part.length > 3 ? part[0] + part.slice(1).toLowerCase() : part))

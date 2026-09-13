@@ -27,6 +27,7 @@ function baseState(overrides: Partial<SearchState> = {}): SearchState {
     ratingMin: undefined,
     ulasanMin: undefined,
     filters: emptyFilters(),
+    bounds: null,
     ...overrides,
   };
 }

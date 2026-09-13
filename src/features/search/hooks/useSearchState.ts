@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import type { FacetKey, SearchEngineKind } from "@/api";
+import type { MapBounds } from "@/types/map";
 import {
   countActiveFilters,
   emptyFilters,
@@ -70,8 +71,21 @@ export function useSearchState() {
       filters: emptyFilters(),
       ratingMin: undefined,
       ulasanMin: undefined,
+      bounds: null,
     });
   }, [patch]);
+
+  /**
+   * "Cari di area peta ini". Storing the viewport in the URL keeps the behaviour
+   * consistent with every other filter: shareable, reload-safe, undoable with
+   * the back button.
+   */
+  const setBounds = useCallback(
+    (bounds: MapBounds | null) => {
+      patch({ bounds });
+    },
+    [patch],
+  );
 
   const setPage = useCallback(
     (page: number) => {
@@ -95,5 +109,6 @@ export function useSearchState() {
     toggleFilter,
     clearFilter,
     resetFilters,
+    setBounds,
   };
 }
