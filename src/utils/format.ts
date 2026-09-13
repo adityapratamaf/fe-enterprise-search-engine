@@ -31,6 +31,11 @@ export function formatSeconds(tookMs: number): string {
   return `${twoDecimals.format(tookMs / 1000)} detik`;
 }
 
+/** Engine timing at millisecond resolution, for benchmark comparisons. */
+export function formatMs(tookMs: number): string {
+  return `${integer.format(Math.round(tookMs))} ms`;
+}
+
 export function formatCoordinates(latitude: number, longitude: number): string {
   return `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
 }

@@ -49,7 +49,7 @@ export const routes: RouteObject[] = [
           {
             path: ROUTES.benchmark,
             lazy: async () => ({
-              Component: (await import("@/features/misc/BenchmarkPage")).BenchmarkPage,
+              Component: (await import("@/features/benchmark/BenchmarkPage")).BenchmarkPage,
             }),
           },
           {
