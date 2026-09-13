@@ -143,7 +143,7 @@ export const OPEN_24H_CODE = "BUKA_24_JAM";
 export const SPBU_IMAGE_FALLBACK = "/spbu-default.png";
 
 /** Wide photograph behind the search hero. */
-export const HERO_IMAGE = "/spbu-background.png";
+export const HERO_IMAGE = "/hero-background.png";
 
 /** Illustration on the pre-search landing screen. */
 export const LANDING_ILLUSTRATION = "/search-spbu.png";
