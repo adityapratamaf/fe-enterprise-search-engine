@@ -143,7 +143,10 @@ describe("SearchPage", () => {
 
     const cards = await findResultCards();
     const target = within(cards[1]!).getAllByRole("button")[0]!;
-    const name = target.textContent ?? "";
+    // The card's own name button reads "SPBU Foo (kode)"; the detail panel's
+    // heading shows just the name, so strip the trailing "(kode)" before using
+    // it as the expected heading text.
+    const name = (target.textContent ?? "").replace(/\s*\([^)]*\)\s*$/, "");
     expect(name).not.toBe("");
 
     await user.click(target);

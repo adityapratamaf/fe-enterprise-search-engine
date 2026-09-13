@@ -54,7 +54,8 @@ export function SpbuResultCard({ item, selected, onSelect }: Props) {
               aria-current={selected ? "true" : undefined}
               className="truncate text-left text-brand-600 hover:underline"
             >
-              {highlightedField(item.highlight, "nama", item.nama)}
+              {highlightedField(item.highlight, "nama", item.nama)}{" "}
+              <span className="font-medium text-ink-400">({item.kodeSpbu})</span>
             </button>
           </h3>
           {distance && (
