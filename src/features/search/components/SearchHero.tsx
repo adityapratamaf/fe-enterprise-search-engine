@@ -25,7 +25,7 @@ export function SearchHero({ keyword, engine, onSubmit }: Props) {
       */}
       <div
         aria-hidden
-        className="absolute inset-y-0 right-0 hidden w-[46%] bg-cover bg-center opacity-90 md:block"
+        className="absolute inset-y-0 right-0 hidden w-[46%] bg-cover bg-right opacity-90 md:block"
         style={{
           backgroundImage: `url(${HERO_IMAGE})`,
           maskImage: FADE_MASK,
