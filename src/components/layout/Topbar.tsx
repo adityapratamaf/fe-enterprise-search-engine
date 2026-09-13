@@ -4,7 +4,7 @@ import { NAV_ITEMS } from "@/config/navigation";
 import { ROUTES } from "@/config/routes";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
-import { BRAND_TAGLINE } from "@/config/branding";
+import { BRAND_LOGO, BRAND_TAGLINE } from "@/config/branding";
 import { UserMenu } from "./UserMenu";
 
 /**
@@ -30,7 +30,7 @@ export function Topbar({ onOpenNav }: { onOpenNav: () => void }) {
 
         <Link to={ROUTES.search} className="ml-2 flex shrink-0 items-center lg:ml-7">
           <img
-            src="/pertamina-logo.png"
+            src={BRAND_LOGO}
             alt="Pertamina"
             width={158}
             height={38}
@@ -45,14 +45,24 @@ export function Topbar({ onOpenNav }: { onOpenNav: () => void }) {
               to={item.to}
               className={({ isActive }) =>
                 cn(
-                  "flex h-full items-center px-4 text-[13.5px] transition-colors",
+                  "relative flex h-full items-center px-4 text-[13.5px] transition-colors",
                   isActive
                     ? "font-semibold text-brand-600"
                     : "font-medium text-ink-700 hover:text-brand-600",
                 )
               }
             >
-              {item.label}
+              {({ isActive }) => (
+                <>
+                  {item.label}
+                  {isActive && (
+                    <span
+                      aria-hidden
+                      className="absolute inset-x-3 bottom-0 h-[3px] rounded-t bg-brand-600"
+                    />
+                  )}
+                </>
+              )}
             </NavLink>
           ))}
         </nav>

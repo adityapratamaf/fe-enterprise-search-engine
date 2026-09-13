@@ -4,6 +4,7 @@ import { FilterSidebar } from "./components/FilterSidebar";
 import { MapPanel } from "./components/MapPanel";
 import { ResultsPanel } from "./components/ResultsPanel";
 import { SearchHero } from "./components/SearchHero";
+import { SearchLanding } from "./components/SearchLanding";
 import { SpbuDetailPanel } from "./components/SpbuDetailPanel";
 import { useSearchState } from "./hooks/useSearchState";
 import { useSpbuSearch } from "./hooks/useSpbuSearch";
@@ -28,7 +29,14 @@ export function SearchPage() {
     setBounds,
   } = useSearchState();
 
-  const { data, error, isLoading, isFetching, refetch } = useSpbuSearch(request);
+  /**
+   * Nothing is fetched until the user actually searches. A filter counts too, so
+   * a shared link like `?provinsi=Bali` still resolves to results rather than
+   * dropping the recipient on the intro screen.
+   */
+  const hasSearched = state.keyword.trim() !== "" || activeFilterCount > 0;
+
+  const { data, error, isLoading, isFetching, refetch } = useSpbuSearch(request, hasSearched);
 
   const [selectedKode, setSelectedKode] = useState<string | null>(null);
 
@@ -86,6 +94,15 @@ export function SearchPage() {
   }, [state.page]);
 
   const labels = useMemo(() => buildLabelMap(items), [items]);
+
+  if (!hasSearched) {
+    return (
+      <div className="flex min-h-[calc(100vh-58px)] flex-col">
+        <SearchHero keyword={state.keyword} engine={state.engine} onSubmit={submitKeyword} />
+        <SearchLanding onPick={submitKeyword} className="flex-1" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[calc(100vh-58px)]">

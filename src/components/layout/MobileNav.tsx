@@ -1,6 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { NavLink } from "react-router-dom";
 import { Icon } from "@/components/ui";
+import { BRAND_LOGO } from "@/config/branding";
 import { NAV_ITEMS } from "@/config/navigation";
 import { cn } from "@/lib/utils";
 
@@ -13,7 +14,7 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
           <Dialog.Title className="sr-only">Navigasi</Dialog.Title>
           <div className="mb-8 flex items-center justify-between">
             <img
-              src="/pertamina-logo.png"
+              src={BRAND_LOGO}
               alt="Pertamina"
               width={155}
               height={36}

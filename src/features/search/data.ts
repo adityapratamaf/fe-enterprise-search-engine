@@ -141,3 +141,55 @@ export const OPEN_24H_CODE = "BUKA_24_JAM";
 
 /** Shared station photo in `public/`, used until the API carries real images. */
 export const SPBU_IMAGE_FALLBACK = "/spbu-default.png";
+
+/** Wide photograph behind the search hero. */
+export const HERO_IMAGE = "/spbu-background.png";
+
+/** Illustration on the pre-search landing screen. */
+export const LANDING_ILLUSTRATION = "/search-spbu.png";
+
+/** Skyline artwork closing the landing screen. */
+export const LANDING_FOOTER_ARTWORK = "/footer.png";
+
+/**
+ * Capability tiles on the landing screen. Icon colours are written as whole
+ * class names because Tailwind scans source text — a template such as
+ * `bg-tile-${tone}-soft` would never be generated.
+ */
+export const LANDING_FEATURES = [
+  {
+    icon: "search-2-line",
+    tone: "bg-tile-blue-soft text-tile-blue-strong",
+    title: "Cari apa saja",
+    body: "Nama SPBU, alamat, kota, provinsi, produk, atau fasilitas.",
+  },
+  {
+    icon: "character-recognition-line",
+    tone: "bg-tile-violet-soft text-tile-violet-strong",
+    title: "Toleransi salah ketik",
+    body: "Elasticsearch tetap menemukan hasil meski kata kunci tidak tepat.",
+  },
+  {
+    icon: "image-line",
+    tone: "bg-tile-green-soft text-tile-green-strong",
+    title: "Cari lewat foto",
+    body: "Unggah foto papan SPBU; teksnya dibaca menjadi kata kunci.",
+  },
+  {
+    icon: "database-2-line",
+    tone: "bg-tile-amber-soft text-tile-amber-strong",
+    title: "Gunakan SQL",
+    body: "Pencarian standar (LIKE) untuk kebutuhan spesifik.",
+  },
+];
+
+/** Popular queries on the landing screen. Each one returns results. */
+export const POPULAR_QUERIES = [
+  "Pertamax",
+  "SPBU Jakarta Selatan",
+  "SPBU terdekat",
+  "Pertalite",
+  "Jl Sudirman",
+  "Fasilitas Mushola",
+  "SPBU dengan Pertamax Turbo",
+];

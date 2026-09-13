@@ -14,7 +14,7 @@ vi.mock("./components/MapPanel", () => ({
   MapPanel: () => <div data-testid="map-panel" />,
 }));
 
-function renderPage(initialUrl = "/search") {
+function renderPage(initialUrl = "/search?q=SPBU") {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: 0 } },
   });
@@ -47,6 +47,40 @@ describe("SearchPage", () => {
   beforeEach(() => {
     // jsdom does not implement it, and the page scrolls on page change.
     window.scrollTo = vi.fn();
+  });
+
+  it("stays idle until something is searched for", async () => {
+    renderPage("/search");
+
+    expect(await screen.findByText(/Mulai pencarian SPBU/i)).toBeInTheDocument();
+    // No results, no filter panel, no detail card before a query exists.
+    expect(document.querySelectorAll("article")).toHaveLength(0);
+    expect(screen.queryByText(/Menampilkan/i)).toBeNull();
+    expect(screen.queryByRole("complementary", { name: /Filter pencarian/i })).toBeNull();
+  });
+
+  it("leaves the idle screen once an example is picked", async () => {
+    const user = userEvent.setup();
+    renderPage("/search");
+
+    // "SPBU terdekat" appears only on the landing; "Pertamax" is also a hero
+    // chip, and the design shows both lists, so that name matches twice.
+    const example = await screen.findByRole("button", { name: "SPBU terdekat" });
+    await user.click(example);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Menampilkan/i)).toBeInTheDocument();
+    });
+    expect(screen.queryByText(/Mulai pencarian SPBU/i)).toBeNull();
+  });
+
+  it("shows results for a shared link that carries only a filter", async () => {
+    // A filter is a search intent too, so such a link must not land on the intro.
+    renderPage("/search?provinsi=Bali");
+
+    await waitFor(() => {
+      expect(screen.getByText(/Menampilkan/i)).toBeInTheDocument();
+    });
   });
 
   it("renders a full page of results from the mock API", async () => {

@@ -64,6 +64,17 @@ export default {
         warning: {
           500: "#ffb400",
         },
+        /**
+         * Accent pairs for the landing feature tiles. Each is a soft ground plus
+         * a saturated foreground; they sit outside the brand ramp because the
+         * design uses four distinct hues to tell the capabilities apart.
+         */
+        tile: {
+          blue: { soft: "#e8f1fe", strong: "#1268ee" },
+          violet: { soft: "#eeeafe", strong: "#6d4aff" },
+          green: { soft: "#e6f6ed", strong: "#15935a" },
+          amber: { soft: "#fdf1e2", strong: "#e08a1e" },
+        },
       },
       boxShadow: {
         card: "0 8px 30px rgba(15, 39, 82, 0.07)",

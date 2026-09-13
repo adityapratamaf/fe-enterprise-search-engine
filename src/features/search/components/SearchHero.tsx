@@ -1,6 +1,9 @@
 import type { SearchEngineKind } from "@/api";
-import { EXAMPLE_QUERIES, SPBU_IMAGE_FALLBACK } from "../data";
+import { EXAMPLE_QUERIES, HERO_IMAGE } from "../data";
 import { SearchBar } from "./SearchBar";
+
+/** Fades the hero photograph out towards the heading; opaque on its right half. */
+const FADE_MASK = "linear-gradient(to left, rgba(0,0,0,1) 45%, rgba(0,0,0,0) 100%)";
 
 type Props = {
   keyword: string;
@@ -14,18 +17,20 @@ export function SearchHero({ keyword, engine, onSubmit }: Props) {
       aria-labelledby="search-heading"
       className="relative overflow-hidden border-b border-line-200 bg-surface-accent"
     >
-      {/* Decorative backdrop. Order matters: the tinted ground is the section's
-          own background, the photo sits on the right, and the wash above it is
-          wider than the photo so its left edge dissolves completely instead of
-          cutting off behind the heading. */}
+      {/*
+        Decorative backdrop: the photograph masked into the tinted ground rather
+        than covered by a second gradient div. An overlay can only approach full
+        opacity, so it left a visible step exactly where the photo began; a mask
+        reaches zero at the element's own edge, so there is nothing to step from.
+      */}
       <div
         aria-hidden
-        className="absolute inset-y-0 right-0 hidden w-[44%] bg-cover bg-center opacity-80 md:block"
-        style={{ backgroundImage: `url(${SPBU_IMAGE_FALLBACK})` }}
-      />
-      <div
-        aria-hidden
-        className="absolute inset-y-0 right-0 hidden w-[56%] bg-gradient-to-l from-transparent via-surface-accent/75 to-surface-accent md:block"
+        className="absolute inset-y-0 right-0 hidden w-[46%] bg-cover bg-center opacity-90 md:block"
+        style={{
+          backgroundImage: `url(${HERO_IMAGE})`,
+          maskImage: FADE_MASK,
+          WebkitMaskImage: FADE_MASK,
+        }}
       />
 
       <div className="relative mx-auto max-w-[1540px] px-4 pb-6 pt-7 sm:px-6 lg:px-8">

@@ -10,11 +10,16 @@ export const spbuKeys = {
 /**
  * `keepPreviousData` keeps the current page on screen while the next one loads,
  * so paging does not blank the list out and back in.
+ *
+ * `enabled` is how the idle screen stays idle: with no keyword and no filter
+ * there is nothing to ask for, so the request is never sent rather than being
+ * sent and then hidden.
  */
-export function useSpbuSearch(params: SearchSpbuParams) {
+export function useSpbuSearch(params: SearchSpbuParams, enabled = true) {
   return useQuery({
     queryKey: spbuKeys.search(params),
     queryFn: ({ signal }) => spbuApi.search(params, signal),
     placeholderData: keepPreviousData,
+    enabled,
   });
 }

@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { isApiError } from "@/api";
 import { Button, Icon, Input, Spinner } from "@/components/ui";
+import { BRAND_LOGO } from "@/config/branding";
 import { ROUTES } from "@/config/routes";
 import { useAuth } from "@/contexts/AuthContext";
+import { LOGIN_SPLASH_IMAGE } from "./data";
 
 type RedirectState = { from?: { pathname?: string } };
 
@@ -48,7 +50,7 @@ export function LoginPage() {
         <div className="absolute -left-16 -top-16 h-56 w-56 rounded-full bg-brand-50" aria-hidden />
         <div className="relative mx-auto w-full max-w-[460px]">
           <img
-            src="/pertamina-logo.png"
+            src={BRAND_LOGO}
             alt="Pertamina"
             width={190}
             height={48}
@@ -151,7 +153,7 @@ export function LoginPage() {
 
       <div className="relative hidden min-h-screen overflow-hidden lg:block">
         <img
-          src="/spbu-default.png"
+          src={LOGIN_SPLASH_IMAGE}
           alt=""
           className="absolute inset-0 h-full w-full object-cover"
         />
