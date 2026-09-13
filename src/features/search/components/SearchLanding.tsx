@@ -76,9 +76,18 @@ export function SearchLanding({
         </div>
       </div>
 
-      {/* `mt-auto`: the page has a min-height, so without this the footer floats
-          mid-screen with empty space beneath it on a tall viewport. */}
-      <BrandFooter artwork={LANDING_FOOTER_ARTWORK} className="mt-auto" />
+      {/*
+        A growing spacer, not `mt-auto` on the footer: `cn` resolves conflicting
+        margin utilities by keeping only the last one, so a margin set inside
+        `BrandFooter` itself would be silently discarded by an `mt-auto` passed
+        in from here. The spacer keeps the two concerns — "how far below the
+        content" and "how the footer looks" — in the components that actually
+        own them, and its minimum height guarantees a small gap even when the
+        page is short enough to scroll rather than leaving the footer flush
+        against the content above it.
+      */}
+      <div className="min-h-12 flex-1" />
+      <BrandFooter artwork={LANDING_FOOTER_ARTWORK} />
     </section>
   );
 }
