@@ -39,7 +39,7 @@ export function SpbuDetailPanel({
   if (isLoading && !item) {
     return (
       <Card className="overflow-hidden">
-        <Skeleton className="h-[126px] w-full rounded-none" />
+        <Skeleton className="aspect-[16/9] w-full rounded-none" />
         <div className="space-y-3 p-3.5">
           <Skeleton className="h-4 w-2/3" />
           <Skeleton className="h-3 w-full" />
@@ -76,10 +76,10 @@ export function SpbuDetailPanel({
           src={spbuImageUrl(item)}
           alt={`Foto ${item.nama}`}
           width={410}
-          height={126}
+          height={231}
           loading="lazy"
           decoding="async"
-          className="h-[126px] w-full object-cover"
+          className="aspect-[16/9] w-full object-cover"
         />
         <Button
           variant="floating"
