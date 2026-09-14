@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import type { SearchSpbuParams } from "@/api";
-import { Card, Icon } from "@/components/ui";
+import { Icon } from "@/components/ui";
 import { useSpbuSearch } from "@/features/search/hooks/useSpbuSearch";
+import { BenchmarkEmptyState } from "./components/BenchmarkEmptyState";
 import { BenchmarkForm } from "./components/BenchmarkForm";
 import { BenchmarkSummary } from "./components/BenchmarkSummary";
 import { EngineResultsPanel } from "./components/EngineResultsPanel";
@@ -80,16 +81,7 @@ export function BenchmarkPage() {
       )}
 
       {!hasRun && !runBenchmark.isPending && !runBenchmark.isError && (
-        <Card className="mt-3.5 grid min-h-[220px] place-items-center px-6 text-center">
-          <div>
-            <Icon name="speed-up-line" className="text-4xl text-ink-300" />
-            <h2 className="mt-3 text-sm font-bold text-ink-800">Belum ada benchmark dijalankan</h2>
-            <p className="mt-1 text-xs text-ink-500">
-              Isi kata kunci lalu klik &quot;Jalankan Benchmark&quot; untuk membandingkan
-              Elasticsearch dan SQL Server.
-            </p>
-          </div>
-        </Card>
+        <BenchmarkEmptyState onRun={handleSubmit} />
       )}
 
       {benchmark && (
