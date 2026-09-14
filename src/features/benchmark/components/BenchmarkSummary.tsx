@@ -9,24 +9,20 @@ function StatCard({
   engineLabel,
   value,
   valueTone,
-  caption,
 }: {
   label: string;
   icon: string;
-  engineLabel?: string;
+  engineLabel: string;
   value: string;
   valueTone?: "success" | "danger" | "neutral";
-  caption?: string;
 }) {
   return (
     <Card className="min-w-0 flex-1 border-line-100 bg-surface-sunken px-4 py-3.5 shadow-none">
       <p className="text-[11.5px] text-ink-500">{label}</p>
-      {engineLabel && (
-        <p className="mt-1 flex items-center gap-1.5 text-[12px] font-medium text-ink-600">
-          <Icon name={icon} className="text-brand-600" />
-          {engineLabel}
-        </p>
-      )}
+      <p className="mt-1 flex items-center gap-1.5 text-[12px] font-medium text-ink-600">
+        <Icon name={icon} className="text-brand-600" />
+        {engineLabel}
+      </p>
       <p
         className={cn(
           "mt-1 text-[19px] font-bold leading-tight",
@@ -37,7 +33,6 @@ function StatCard({
       >
         {value}
       </p>
-      {caption && <p className="mt-0.5 text-[11px] text-ink-400">{caption}</p>}
     </Card>
   );
 }
@@ -96,8 +91,8 @@ export function BenchmarkSummary({ benchmark }: { benchmark: BenchmarkResponse }
       <StatCard
         label="Dataset"
         icon="stack-line"
+        engineLabel="Dokumen SPBU"
         value={formatCount(totalDokumen)}
-        caption="dokumen SPBU"
       />
     </Card>
   );
