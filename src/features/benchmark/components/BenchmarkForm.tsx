@@ -23,6 +23,8 @@ export function BenchmarkForm({
   onSubmit,
   isRunning,
 }: Props) {
+  const keywordEmpty = form.keyword.trim() === "";
+
   return (
     <Card>
       <form
@@ -95,7 +97,7 @@ export function BenchmarkForm({
           <Button
             type="submit"
             size="lg"
-            disabled={isRunning}
+            disabled={isRunning || keywordEmpty}
             className="w-full lg:w-auto lg:shrink-0"
           >
             {isRunning ? (

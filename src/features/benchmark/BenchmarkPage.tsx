@@ -29,6 +29,7 @@ export function BenchmarkPage() {
   const runBenchmark = useBenchmarkRun();
   const benchmark = runBenchmark.data;
   const hasRun = benchmark !== undefined;
+  const keywordEmpty = form.keyword.trim() === "";
 
   const patchForm = (patch: Partial<BenchmarkFormState>) =>
     setForm((prev) => ({ ...prev, ...patch }));
@@ -81,7 +82,7 @@ export function BenchmarkPage() {
       )}
 
       {!hasRun && !runBenchmark.isPending && !runBenchmark.isError && (
-        <BenchmarkEmptyState onRun={handleSubmit} />
+        <BenchmarkEmptyState onRun={handleSubmit} disabled={keywordEmpty} />
       )}
 
       {benchmark && (

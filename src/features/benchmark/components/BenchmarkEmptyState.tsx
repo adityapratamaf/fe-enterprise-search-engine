@@ -6,7 +6,13 @@ import { BENCHMARK_FEATURES, BENCHMARK_ILLUSTRATION } from "../data";
  * equivalent for this page. Reuses the shared `Button` rather than a one-off
  * styled element, so the CTA here always matches the form's own submit button.
  */
-export function BenchmarkEmptyState({ onRun }: { onRun: () => void }) {
+export function BenchmarkEmptyState({
+  onRun,
+  disabled,
+}: {
+  onRun: () => void;
+  disabled: boolean;
+}) {
   return (
     <Card className="relative mt-3.5 overflow-hidden px-6 py-10 text-center">
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -57,7 +63,7 @@ export function BenchmarkEmptyState({ onRun }: { onRun: () => void }) {
           <span className="h-px flex-1 bg-line-300" />
         </div>
 
-        <Button size="lg" onClick={onRun} className="mx-auto mt-5">
+        <Button size="lg" onClick={onRun} disabled={disabled} className="mx-auto mt-5">
           <Icon name="play-line" />
           Jalankan Benchmark
         </Button>
