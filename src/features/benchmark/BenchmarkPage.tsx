@@ -57,9 +57,7 @@ export function BenchmarkPage() {
 
   return (
     <div>
-      <BenchmarkHero />
-
-      <div className="mx-auto max-w-[1540px] px-4 py-4 sm:px-5 lg:px-7">
+      <BenchmarkHero>
         <BenchmarkForm
           form={form}
           onChange={patchForm}
@@ -68,7 +66,9 @@ export function BenchmarkPage() {
           onSubmit={handleSubmit}
           isRunning={runBenchmark.isPending}
         />
+      </BenchmarkHero>
 
+      <div className="mx-auto max-w-[1540px] px-4 pb-4 sm:px-5 lg:px-7">
         {runBenchmark.isError && (
           <p className="mt-3 flex items-center gap-1.5 text-sm text-danger-500">
             <Icon name="error-warning-line" />
