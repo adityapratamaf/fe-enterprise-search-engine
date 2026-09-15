@@ -69,10 +69,7 @@ export function EngineResultsPanel({
         <div className="flex items-start justify-between gap-3">
           <div className="flex min-w-0 items-start gap-2.5">
             <div
-              className={cn(
-                "grid h-9 w-9 shrink-0 place-items-center rounded-lg",
-                TILE_TONE[tone],
-              )}
+              className={cn("grid h-9 w-9 shrink-0 place-items-center rounded-lg", TILE_TONE[tone])}
             >
               <Icon name={icon} className="text-lg" />
             </div>
@@ -101,8 +98,7 @@ export function EngineResultsPanel({
               <>
                 <span>
                   Menampilkan {formatCount(from)} - {formatCount(to)} dari{" "}
-                  <b className="font-semibold text-ink-900">{formatCount(data.totalCount)}</b>{" "}
-                  hasil
+                  <b className="font-semibold text-ink-900">{formatCount(data.totalCount)}</b> hasil
                 </span>
                 {isFetching && <Spinner size="sm" className="text-brand-600" />}
               </>

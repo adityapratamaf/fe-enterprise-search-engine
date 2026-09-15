@@ -1,9 +1,4 @@
-import type {
-  BenchmarkParams,
-  BenchmarkResponse,
-  SearchEngineKind,
-  SearchSpbuParams,
-} from "@/api";
+import type { BenchmarkParams, BenchmarkResponse, SearchEngineKind, SearchSpbuParams } from "@/api";
 import { RESULT_PAGE_SIZE } from "./data";
 import type { BenchmarkFormState, BenchmarkQuery, EnginePanelState } from "./types";
 
