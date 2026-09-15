@@ -17,15 +17,26 @@ export const LOGIN_HIGHLIGHTS: LoginHighlight[] = [
   {
     icon: "bar-chart-grouped-line",
     title: "Analitik Lebih Dalam",
-    body: "Dukung keputusan berbasis data.",
+    body: "Dukung pengambilan keputusan yang lebih tepat.",
   },
   {
     icon: "leaf-line",
-    title: "Masa Depan Berkelanjutan",
-    body: "Energi untuk Indonesia yang lebih baik.",
+    title: "Masa Depan Lebih Berkelanjutan",
+    body: "Bersama menjaga energi untuk Indonesia yang lebih baik.",
   },
 ];
 
 /** Same line as the header panel; kept in one place so they cannot drift. */
 export const LOGIN_TAGLINE = BRAND_TAGLINE;
+export const LOGIN_SUBTITLE = "Masuk untuk melakukan pencarian dan analitik data SPBU Pertamina";
+
+/** Short note above the submit button's result, framing what the platform is for. */
+export const LOGIN_NOTE =
+  "Satu platform untuk data SPBU yang lebih terintegrasi, akurat, dan berdampak bagi Indonesia.";
+
+/** Caption over the showcase photo — distinct copy from the header tagline. */
+export const LOGIN_PHOTO_CAPTION = ["Pertamina untuk", "Indonesia yang Lebih Baik"];
+
 export const LOGIN_SPLASH_IMAGE = "/spbu-login.png";
+/** Faded into the form panel's backdrop as a watermark, not shown at full size. */
+export const LOGIN_WATERMARK = "/pertamina-icon.png";

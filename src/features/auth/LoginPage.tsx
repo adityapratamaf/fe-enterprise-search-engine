@@ -1,13 +1,20 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { isApiError } from "@/api";
-import { Button, Icon, Input, Spinner } from "@/components/ui";
+import { Button, Checkbox, Icon, Input, Spinner } from "@/components/ui";
 import { BRAND_LOGO } from "@/config/branding";
 import { ROUTES } from "@/config/routes";
 import { useAuth } from "@/contexts/AuthContext";
-import { LOGIN_SPLASH_IMAGE } from "./data";
-
-type RedirectState = { from?: { pathname?: string } };
+import {
+  LOGIN_HIGHLIGHTS,
+  LOGIN_NOTE,
+  LOGIN_PHOTO_CAPTION,
+  LOGIN_SPLASH_IMAGE,
+  LOGIN_SUBTITLE,
+  LOGIN_TAGLINE,
+  LOGIN_WATERMARK,
+} from "./data";
+import type { RedirectState } from "./types";
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -17,6 +24,7 @@ export function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -47,7 +55,21 @@ export function LoginPage() {
   return (
     <div className="grid min-h-screen bg-white lg:grid-cols-[42%_58%]">
       <div className="relative flex min-h-screen items-center overflow-hidden px-7 py-10 sm:px-14 lg:px-16">
-        <div className="absolute -left-16 -top-16 h-56 w-56 rounded-full bg-brand-50" aria-hidden />
+        {/* Oversized, barely-there brand mark rather than an abstract shape —
+            the same logo the header uses, just huge and faded into the ground. */}
+        <img
+          src={LOGIN_WATERMARK}
+          alt=""
+          aria-hidden
+          className="pointer-events-none absolute -right-24 -top-20 w-96 opacity-[0.05]"
+        />
+        <img
+          src={LOGIN_WATERMARK}
+          alt=""
+          aria-hidden
+          className="pointer-events-none absolute -bottom-16 -left-20 w-72 opacity-[0.04]"
+        />
+
         <div className="relative mx-auto w-full max-w-[460px]">
           <img
             src={BRAND_LOGO}
@@ -60,18 +82,8 @@ export function LoginPage() {
             className="mb-3 h-1 w-28 bg-gradient-to-r from-red-500 via-blue-500 to-green-500"
             aria-hidden
           />
-          <p className="text-xs font-semibold uppercase tracking-[.2em] text-ink-500">
-            SPBU Search Platform
-          </p>
-          <h1 className="mt-3 text-4xl font-bold leading-tight text-ink-900">
-            Energizing a
-            <br />
-            Sustainable Tomorrow
-          </h1>
-          <p className="mt-4 max-w-md text-sm leading-6 text-ink-500">
-            Masuk untuk menjelajahi pencarian dan analitik data SPBU secara cepat, terstruktur, dan
-            lebih bermakna.
-          </p>
+          <h1 className="text-4xl font-bold leading-tight text-ink-900">{LOGIN_TAGLINE}</h1>
+          <p className="mt-4 max-w-md text-sm leading-6 text-ink-500">{LOGIN_SUBTITLE}</p>
 
           <form onSubmit={submit} className="mt-9 space-y-4" noValidate>
             {error && (
@@ -132,11 +144,17 @@ export function LoginPage() {
               />
             </div>
 
-            <div className="flex items-center justify-end text-xs">
-              <button type="button" className="font-semibold text-brand-600 hover:text-brand-700">
-                Lupa password?
-              </button>
-            </div>
+            <label
+              htmlFor="remember-me"
+              className="flex items-center gap-2 text-xs font-medium text-ink-700"
+            >
+              <Checkbox
+                id="remember-me"
+                checked={rememberMe}
+                onChange={(event) => setRememberMe(event.target.checked)}
+              />
+              Ingat saya
+            </label>
 
             <Button type="submit" size="lg" className="w-full" disabled={submitting}>
               {submitting ? <Spinner size="sm" label="Memproses" /> : null}
@@ -145,8 +163,15 @@ export function LoginPage() {
             </Button>
           </form>
 
+          <div className="mt-6 flex items-start gap-3 rounded-xl bg-surface-sunken p-4">
+            <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white text-brand-600">
+              <Icon name="bar-chart-2-line" />
+            </div>
+            <p className="text-xs leading-5 text-ink-600">{LOGIN_NOTE}</p>
+          </div>
+
           <p className="mt-10 text-xs text-ink-400">
-            © 2026 Enterprise Search Platform. All rights reserved.
+            © {new Date().getFullYear()} PT Pertamina (Persero). All rights reserved.
           </p>
         </div>
       </div>
@@ -162,26 +187,14 @@ export function LoginPage() {
           aria-hidden
         />
         <p className="absolute right-10 top-10 max-w-[240px] border-l border-white/60 pl-4 text-sm leading-5 text-white">
-          Energizing a Sustainable Tomorrow
+          {LOGIN_PHOTO_CAPTION.map((line) => (
+            <span key={line} className="block">
+              {line}
+            </span>
+          ))}
         </p>
         <ul className="absolute bottom-10 left-10 right-10 grid grid-cols-3 gap-5 text-white">
-          {[
-            {
-              icon: "search-eye-line",
-              title: "Akses Data Lebih Mudah",
-              body: "Temukan informasi SPBU dengan cepat dan akurat.",
-            },
-            {
-              icon: "bar-chart-grouped-line",
-              title: "Analitik Lebih Dalam",
-              body: "Dukung keputusan berbasis data.",
-            },
-            {
-              icon: "leaf-line",
-              title: "Masa Depan Berkelanjutan",
-              body: "Energi untuk Indonesia yang lebih baik.",
-            },
-          ].map((item) => (
+          {LOGIN_HIGHLIGHTS.map((item) => (
             <li key={item.title}>
               <Icon name={item.icon} className="text-2xl" />
               <p className="mt-2 text-sm font-bold">{item.title}</p>
