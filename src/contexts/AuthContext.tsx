@@ -18,6 +18,10 @@ import {
   type UserResponse,
 } from "@/api";
 import { hasPermission } from "@/features/auth/utils";
+import { useIdleLogout } from "@/hooks/useIdleLogout";
+
+/** Tanpa aktivitas selama ini, sesi dianggap habis dan pengguna dikeluarkan. */
+const IDLE_LOGOUT_MS = 30 * 60 * 1000;
 
 type AuthState = {
   user: UserResponse | null;
@@ -88,6 +92,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       clearSession();
     }
   }, [clearSession]);
+
+  // Logout otomatis saat idle — hanya aktif ketika sudah login. `RequireAuth`
+  // yang menangani redirect ke /login setelah sesi ini dikosongkan.
+  const isAuthenticated = state.user !== null;
+  const handleIdle = useCallback(() => {
+    void logout();
+  }, [logout]);
+  useIdleLogout(IDLE_LOGOUT_MS, handleIdle, isAuthenticated);
 
   const value = useMemo<AuthContextValue>(() => {
     const { user, modules } = state;

@@ -9,9 +9,11 @@ const DEFAULT_BASE_URL = "http://localhost:5152/api";
  * the UI is previewable with no backend and no real login; `live` talks to
  * SearchEngine-BE. Set `VITE_API_MODE=live` in `.env` to switch.
  *
- * Defaults to `mock` on purpose: backend integration is not turned on yet.
+ * Selalu mock saat dijalankan lewat Vitest — supaya `.env` milik developer
+ * (mis. `VITE_API_MODE=live` untuk pakai backend asli) tidak ikut memanggil
+ * jaringan sungguhan saat `npm test`.
  */
-const MODE = import.meta.env.VITE_API_MODE === "live" ? "live" : "mock";
+const MODE = !import.meta.env.VITEST && import.meta.env.VITE_API_MODE === "live" ? "live" : "mock";
 
 export const API_CONFIG = {
   mode: MODE,

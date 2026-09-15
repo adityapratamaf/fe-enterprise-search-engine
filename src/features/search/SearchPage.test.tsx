@@ -63,9 +63,9 @@ describe("SearchPage", () => {
     const user = userEvent.setup();
     renderPage("/search");
 
-    // "SPBU terdekat" appears only on the landing; "Pertamax" is also a hero
-    // chip, and the design shows both lists, so that name matches twice.
-    const example = await screen.findByRole("button", { name: "SPBU terdekat" });
+    // Only on the landing's popular-queries list, not also a hero chip —
+    // otherwise the name would match twice.
+    const example = await screen.findByRole("button", { name: "SPBU dengan Pertamax Turbo" });
     await user.click(example);
 
     await waitFor(() => {

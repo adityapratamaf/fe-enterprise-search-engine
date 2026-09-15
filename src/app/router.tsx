@@ -8,9 +8,9 @@ import { RouteError } from "./RouteError";
  * instead of being repeated per route and remounted on every transition.
  * Pages load lazily so the initial bundle carries only the search screen.
  *
- * No auth gate for now — the app is meant to be previewable without logging in.
- * `RequireAuth` is written and ready; wrapping the layout branch with it is all
- * that is needed to turn protection back on.
+ * Semua halaman di bawah `MainLayout` diproteksi `RequireAuth`; sebaliknya
+ * `/login` diproteksi `RedirectIfAuthenticated` supaya yang sudah masuk tidak
+ * bisa kembali ke sana.
  *
  * Exported separately from the browser router so the same tree can be mounted in
  * a memory router by tests.
@@ -27,42 +27,61 @@ export const routes: RouteObject[] = [
        */
       { index: true, loader: () => redirect(ROUTES.search) },
       {
-        path: ROUTES.login,
-        lazy: async () => ({ Component: (await import("@/features/auth/LoginPage")).LoginPage }),
+        lazy: async () => ({
+          Component: (await import("@/features/auth/RedirectIfAuthenticated"))
+            .RedirectIfAuthenticated,
+        }),
+        children: [
+          {
+            path: ROUTES.login,
+            lazy: async () => ({
+              Component: (await import("@/features/auth/LoginPage")).LoginPage,
+            }),
+          },
+        ],
       },
       {
         lazy: async () => ({
-          Component: (await import("@/components/layout/MainLayout")).MainLayout,
+          Component: (await import("@/features/auth/RequireAuth")).RequireAuth,
         }),
-        errorElement: <RouteError />,
         children: [
           {
-            path: ROUTES.search,
             lazy: async () => ({
-              Component: (await import("@/features/search/SearchPage")).SearchPage,
+              Component: (await import("@/components/layout/MainLayout")).MainLayout,
             }),
-          },
-          {
-            path: ROUTES.map,
-            lazy: async () => ({ Component: (await import("@/features/map/MapPage")).MapPage }),
-          },
-          {
-            path: ROUTES.benchmark,
-            lazy: async () => ({
-              Component: (await import("@/features/benchmark/BenchmarkPage")).BenchmarkPage,
-            }),
-          },
-          {
-            path: ROUTES.analytics,
-            lazy: async () => ({
-              Component: (await import("@/features/misc/AnalyticsPage")).AnalyticsPage,
-            }),
-          },
-          {
-            path: ROUTES.about,
-            lazy: async () => ({
-              Component: (await import("@/features/misc/AboutPage")).AboutPage,
-            }),
+            errorElement: <RouteError />,
+            children: [
+              {
+                path: ROUTES.search,
+                lazy: async () => ({
+                  Component: (await import("@/features/search/SearchPage")).SearchPage,
+                }),
+              },
+              {
+                path: ROUTES.map,
+                lazy: async () => ({
+                  Component: (await import("@/features/map/MapPage")).MapPage,
+                }),
+              },
+              {
+                path: ROUTES.benchmark,
+                lazy: async () => ({
+                  Component: (await import("@/features/benchmark/BenchmarkPage")).BenchmarkPage,
+                }),
+              },
+              {
+                path: ROUTES.analytics,
+                lazy: async () => ({
+                  Component: (await import("@/features/misc/AnalyticsPage")).AnalyticsPage,
+                }),
+              },
+              {
+                path: ROUTES.about,
+                lazy: async () => ({
+                  Component: (await import("@/features/misc/AboutPage")).AboutPage,
+                }),
+              },
+            ],
           },
         ],
       },
