@@ -11,6 +11,7 @@ import type {
 } from "../contracts/spbu";
 
 export const spbuApi = {
+  /** Pencarian SPBU utama — filter, geo, sort, dan paginasi lewat query string. */
   search: (params: SearchSpbuParams, signal?: AbortSignal) =>
     api.get<SearchSpbuResponse>(ENDPOINTS.spbu.search, { ...params }, { signal }),
 
