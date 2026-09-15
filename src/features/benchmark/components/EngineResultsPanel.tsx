@@ -64,7 +64,7 @@ export function EngineResultsPanel({
   const to = data ? Math.min(data.pageNumber * data.pageSize, data.totalCount) : 0;
 
   return (
-    <Card className="min-w-0 overflow-hidden">
+    <Card className="min-w-0 overflow-hidden shadow-none">
       <div className="border-b border-line-100 px-4 py-3.5">
         <div className="flex items-start justify-between gap-3">
           <div className="flex min-w-0 items-start gap-2.5">

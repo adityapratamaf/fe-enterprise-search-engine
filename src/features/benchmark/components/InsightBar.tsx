@@ -12,7 +12,7 @@ export function InsightBar({ benchmark }: { benchmark: BenchmarkResponse }) {
     : `${winnerLabel} ${benchmark.kaliLebihCepat}x lebih cepat daripada ${loserLabel} untuk kueri ini.`;
 
   return (
-    <Card className="mt-3.5 flex flex-col gap-3 border-brand-200 bg-brand-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+    <Card className="mt-3.5 flex flex-col gap-3 border-brand-200 bg-brand-50 p-4 shadow-none sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-start gap-2.5">
         <Icon name="lightbulb-line" className="mt-0.5 shrink-0 text-lg text-brand-600" />
         <div>

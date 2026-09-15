@@ -8,7 +8,7 @@ import { BENCHMARK_FEATURES, BENCHMARK_ILLUSTRATION } from "../data";
  */
 export function BenchmarkEmptyState({ onRun, disabled }: { onRun: () => void; disabled: boolean }) {
   return (
-    <Card className="relative mt-3.5 overflow-hidden px-6 py-10 text-center">
+    <Card className="relative mt-3.5 overflow-hidden px-6 py-10 text-center shadow-none">
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute left-1/2 top-0 h-96 w-96 -translate-x-1/2 -translate-y-1/3 rounded-full bg-brand-100/70 blur-3xl" />
         <div className="absolute right-10 top-20 h-64 w-64 rounded-full bg-tile-violet-soft/70 blur-3xl" />
@@ -38,7 +38,7 @@ export function BenchmarkEmptyState({ onRun, disabled }: { onRun: () => void; di
           {BENCHMARK_FEATURES.map((feature) => (
             <li
               key={feature.title}
-              className="rounded-xl border border-line-200 bg-white p-3 shadow-soft"
+              className="rounded-xl border border-line-200 bg-white p-3"
             >
               <span className={`grid h-8 w-8 place-items-center rounded-lg ${feature.tone}`}>
                 <Icon name={feature.icon} className="text-base" />

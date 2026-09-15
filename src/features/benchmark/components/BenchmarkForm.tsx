@@ -26,7 +26,7 @@ export function BenchmarkForm({
   const keywordEmpty = form.keyword.trim() === "";
 
   return (
-    <Card>
+    <Card className="shadow-none">
       <form
         className="p-4 sm:p-5"
         onSubmit={(event) => {

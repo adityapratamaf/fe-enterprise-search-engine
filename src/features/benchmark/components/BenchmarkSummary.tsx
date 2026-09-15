@@ -43,8 +43,8 @@ export function BenchmarkSummary({ benchmark }: { benchmark: BenchmarkResponse }
   const winnerLabel = esFaster ? "Elasticsearch" : "SQL Server";
 
   return (
-    <Card className="mt-3.5 flex flex-col gap-3 p-3 sm:flex-row sm:items-stretch">
-      <Card className="min-w-0 flex-1 border-success-500/30 bg-success-50 px-4 py-3.5 sm:flex-[1.4]">
+    <Card className="mt-3.5 flex flex-col gap-3 p-3 shadow-none sm:flex-row sm:items-stretch">
+      <Card className="min-w-0 flex-1 border-success-500/30 bg-success-50 px-4 py-3.5 shadow-none sm:flex-[1.4]">
         <div className="flex items-center gap-3">
           <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-success-500/15 text-success-500">
             <Icon name="trophy-line" className="text-xl" />
