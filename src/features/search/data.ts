@@ -179,9 +179,7 @@ export const LANDING_FEATURES = [
 
 /** Popular queries on the landing screen. Each one returns results. */
 export const POPULAR_QUERIES = [
-  "Pertamax",
   "SPBU Jakarta Selatan",
-  "SPBU terdekat",
   "Pertalite",
   "Jl Sudirman",
   "Fasilitas Mushola",

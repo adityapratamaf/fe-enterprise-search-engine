@@ -212,7 +212,7 @@ export function SearchBar({ keyword, engine, onSubmit }: Props) {
 
         <EngineButton
           icon="search-line"
-          label="Cari dengan Elasticsearch"
+          label="Search Elasticsearch"
           hint="Pencarian cerdas, toleransi salah ketik"
           active={engine === "Elasticsearch"}
           onClick={() => submit(draft, "Elasticsearch")}
@@ -221,7 +221,7 @@ export function SearchBar({ keyword, engine, onSubmit }: Props) {
 
         <EngineButton
           icon="database-2-line"
-          label="Cari dengan SQL"
+          label="Search SQL"
           hint="Pencarian standar (LIKE)"
           active={engine === "Sql"}
           onClick={() => submit(draft, "Sql")}
