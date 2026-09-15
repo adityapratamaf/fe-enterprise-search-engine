@@ -38,12 +38,14 @@ Kelimanya dijalankan di CI (`.github/workflows/ci.yml`) pada setiap push dan PR.
 
 ## Mode data
 
-`VITE_API_MODE` menentukan sumber data, dan bawaannya `mock`:
+`VITE_AUTH_API_MODE` dan `VITE_SPBU_API_MODE` masing-masing menentukan sumber
+data auth dan SPBU search secara independen, bawaannya `mock` untuk keduanya —
+login bisa `live` sementara search/map/benchmark tetap `mock`, atau sebaliknya:
 
 | Mode   | Perilaku                                                                       |
 | ------ | ------------------------------------------------------------------------------ |
 | `mock` | Fixture di `src/api/mock/`, dijalankan di browser. Tanpa backend, tanpa login. |
-| `live` | Memanggil `SearchEngine-BE` sungguhan, termasuk login dan refresh token.       |
+| `live` | Memanggil `SearchEngine-BE` sungguhan.                                         |
 
 Kedua implementasi memenuhi tipe kontrak yang sama — `spbuMockApi` dan
 `authMockApi` dideklarasikan dengan `satisfies typeof spbuApi` / `typeof authApi`
@@ -64,17 +66,18 @@ fasilitas yang sama dengan seeder backend.
 
 ```bash
 cp .env.example .env
-# lalu set:
-#   VITE_API_MODE=live
+# lalu set salah satu atau keduanya:
+#   VITE_AUTH_API_MODE=live
+#   VITE_SPBU_API_MODE=live
 #   VITE_API_BASE_URL=http://localhost:5152/api
 ```
 
 `5152` adalah port `dotnet run` pada `launchSettings.json` backend, dan
 `http://localhost:5173` sudah ada di daftar `Cors:AllowedOrigins`.
 
-Untuk mengembalikan proteksi login, bungkus cabang layout di
-`src/app/router.tsx` dengan `RequireAuth` — komponennya sudah siap dan tidak
-dipakai saat ini.
+Semua halaman di bawah `MainLayout` sudah diproteksi `RequireAuth` (belum
+login → dilempar ke `/login`), dan `/login` sendiri diproteksi
+`RedirectIfAuthenticated` (sudah login → dilempar ke `/search`).
 
 Endpoint yang dipetakan di layer API:
 
@@ -107,7 +110,7 @@ src/
     http.ts             axios instance, interceptor, unwrap Result<T>
     tokenStore.ts       satu-satunya pemilik token di localStorage
     ApiError.ts         satu tipe error untuk semua mode kegagalan
-    index.ts            memilih implementasi berdasarkan VITE_API_MODE
+    index.ts            memilih implementasi berdasarkan VITE_AUTH_API_MODE / VITE_SPBU_API_MODE
   app/                  router, provider, error boundary rute
   components/
     ui/                 primitive lintas fitur (Button, Card, Input, Icon, ...)

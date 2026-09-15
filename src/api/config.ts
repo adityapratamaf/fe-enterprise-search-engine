@@ -5,19 +5,28 @@
 const DEFAULT_BASE_URL = "http://localhost:5152/api";
 
 /**
- * Data source. `mock` runs entirely in the browser against local fixtures, so
- * the UI is previewable with no backend and no real login; `live` talks to
- * SearchEngine-BE. Set `VITE_API_MODE=live` in `.env` to switch.
- *
  * Selalu mock saat dijalankan lewat Vitest — supaya `.env` milik developer
- * (mis. `VITE_API_MODE=live` untuk pakai backend asli) tidak ikut memanggil
- * jaringan sungguhan saat `npm test`.
+ * (mis. untuk pakai backend asli) tidak ikut memanggil jaringan sungguhan
+ * saat `npm test`.
  */
-const MODE = !import.meta.env.VITEST && import.meta.env.VITE_API_MODE === "live" ? "live" : "mock";
+function resolveMode(envValue: string | undefined): "mock" | "live" {
+  return !import.meta.env.VITEST && envValue === "live" ? "live" : "mock";
+}
+
+/**
+ * Auth dan SPBU search punya sumber data masing-masing, bukan satu saklar
+ * gabungan — login bisa jalan ke backend asli sementara pencarian/peta/
+ * benchmark tetap pakai fixture, atau sebaliknya. Set `VITE_AUTH_API_MODE`
+ * dan/atau `VITE_SPBU_API_MODE` ke `live` di `.env` untuk mengaktifkan.
+ */
+const AUTH_MODE = resolveMode(import.meta.env.VITE_AUTH_API_MODE);
+const SPBU_MODE = resolveMode(import.meta.env.VITE_SPBU_API_MODE);
 
 export const API_CONFIG = {
-  mode: MODE,
-  useMock: MODE === "mock",
+  authMode: AUTH_MODE,
+  spbuMode: SPBU_MODE,
+  useMockAuth: AUTH_MODE === "mock",
+  useMockSpbu: SPBU_MODE === "mock",
   baseURL: import.meta.env.VITE_API_BASE_URL ?? DEFAULT_BASE_URL,
   timeoutMs: 20_000,
 } as const;

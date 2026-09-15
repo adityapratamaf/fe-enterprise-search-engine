@@ -56,7 +56,7 @@ function readStoredState(): AuthState {
   if (session && tokenStore.getRefresh()) {
     return { user: session.user, modules: session.modules };
   }
-  return API_CONFIG.useMock ? MOCK_SESSION : EMPTY;
+  return API_CONFIG.useMockAuth ? MOCK_SESSION : EMPTY;
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -68,7 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Only a live backend can invalidate a session; mock mode has no 401 to react to.
-  const watchUnauthorized = !API_CONFIG.useMock;
+  const watchUnauthorized = !API_CONFIG.useMockAuth;
 
   useEffect(() => {
     if (!watchUnauthorized) return;

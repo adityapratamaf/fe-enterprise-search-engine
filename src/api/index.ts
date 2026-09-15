@@ -17,8 +17,9 @@ export { FACET_KEYS, SORT_FIELDS } from "./contracts/spbu";
 
 /**
  * The rest of the app imports these two and never learns which implementation it
- * got. Both sides are checked against the same contract types, so flipping
- * `VITE_API_MODE` is the only change needed to go live.
+ * got. Both sides are checked against the same contract types, so flipping the
+ * relevant env var is the only change needed to go live — independently for
+ * auth and for SPBU search.
  */
-export const spbuApi = API_CONFIG.useMock ? spbuMockApi : liveSpbuApi;
-export const authApi = API_CONFIG.useMock ? authMockApi : liveAuthApi;
+export const spbuApi = API_CONFIG.useMockSpbu ? spbuMockApi : liveSpbuApi;
+export const authApi = API_CONFIG.useMockAuth ? authMockApi : liveAuthApi;
