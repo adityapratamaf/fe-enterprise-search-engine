@@ -98,7 +98,7 @@ Endpoint yang dipetakan di layer API:
 | `GET /search/spbu`            | `search.view`    | Hasil pencarian, facet, kemampuan mesin     |
 | `GET /search/spbu/suggestion` | `search.view`    | Saran ketik-langsung                        |
 | `POST /search/spbu/image`     | `search.view`    | Pencarian dari foto (OCR)                   |
-| `GET /search/spbu/benchmark`  | `search.execute` | Tersedia di layer API, halaman belum dibuat |
+| `GET /search/spbu/benchmark`  | `search.execute` | Halaman `/benchmark`: adu cepat ES vs SQL   |
 
 **Tidak ada** endpoint `GET /search/spbu/{kode}`. Backend sengaja mengirim
 dokumen SPBU secara utuh di setiap hasil pencarian, sehingga panel detail tidak

@@ -31,7 +31,8 @@ export const spbuApi = {
     });
   },
 
-  /** Runs both engines synchronously; can take several seconds. */
+  /** Jalankan kedua mesin sinkron di request yang sama — bisa beberapa detik,
+   * karena satu kueri SQL di ratusan ribu baris memang selama itu. */
   benchmark: (params: BenchmarkParams, signal?: AbortSignal) =>
     api.get<BenchmarkResponse>(ENDPOINTS.spbu.benchmark, { ...params }, { signal }),
 
