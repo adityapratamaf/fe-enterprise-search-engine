@@ -45,7 +45,7 @@ export function SearchLanding({
           detail SPBU akan muncul setelah pencarian dijalankan.
         </p>
 
-        <ul className="mt-6 grid gap-3 text-left sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="mx-auto mt-6 grid max-w-3xl gap-3 text-left sm:grid-cols-3">
           {LANDING_FEATURES.map((feature) => (
             <li
               key={feature.title}

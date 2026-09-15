@@ -175,12 +175,6 @@ export const LANDING_FEATURES = [
     title: "Cari lewat foto",
     body: "Unggah foto papan SPBU; teksnya dibaca menjadi kata kunci.",
   },
-  {
-    icon: "database-2-line",
-    tone: "bg-tile-amber-soft text-tile-amber-strong",
-    title: "Gunakan SQL",
-    body: "Pencarian standar (LIKE) untuk kebutuhan spesifik.",
-  },
 ];
 
 /** Popular queries on the landing screen. Each one returns results. */
