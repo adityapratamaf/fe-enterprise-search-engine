@@ -1,6 +1,6 @@
 import { ApiError, type SearchSpbuResponse, type SpbuSearchItem } from "@/api";
 import { Button, Card, Dropdown, Icon, Skeleton, Spinner } from "@/components/ui";
-import { formatCount, formatSeconds } from "@/utils/format";
+import { formatCount, formatMs } from "@/utils/format";
 import { RESULT_STAGGER_SECONDS, SORT_OPTIONS } from "../data";
 import { parseSortValue, toSortValue } from "../utils";
 import { EngineNotice } from "./EngineNotice";
@@ -51,7 +51,7 @@ export function ResultsPanel({
               <span>
                 Menampilkan {formatCount(from)} - {formatCount(to)} dari{" "}
                 <b className="font-semibold text-ink-900">{formatCount(data.totalCount)}</b> hasil (
-                {formatSeconds(data.tookMs)})
+                {formatMs(data.tookMs)})
               </span>
               {isFetching && <Spinner size="sm" className="text-brand-600" />}
             </>

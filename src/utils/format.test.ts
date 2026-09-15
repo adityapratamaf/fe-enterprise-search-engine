@@ -5,8 +5,8 @@ import {
   formatCount,
   formatDate,
   formatDistance,
+  formatMs,
   formatRating,
-  formatSeconds,
   googleMapsUrl,
   humanizeEnum,
 } from "./format";
@@ -41,9 +41,13 @@ describe("formatDistance", () => {
   });
 });
 
-describe("formatSeconds", () => {
-  it("renders engine timing the way the results header reads it", () => {
-    expect(formatSeconds(230)).toBe("0,23 detik");
+describe("formatMs", () => {
+  it("renders engine timing rounded to the nearest millisecond", () => {
+    expect(formatMs(38.11)).toBe("38 ms");
+  });
+
+  it("groups thousands the Indonesian way for slow queries", () => {
+    expect(formatMs(1930.97)).toBe("1.931 ms");
   });
 });
 

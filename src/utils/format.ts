@@ -3,10 +3,6 @@ const oneDecimal = new Intl.NumberFormat("id-ID", {
   minimumFractionDigits: 1,
   maximumFractionDigits: 1,
 });
-const twoDecimals = new Intl.NumberFormat("id-ID", {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-});
 
 export const EMPTY_VALUE = "—";
 
@@ -26,12 +22,7 @@ export function formatDistance(jarakKm: number | null): string | null {
     : `${oneDecimal.format(jarakKm)} km`;
 }
 
-/** Engine timing, rendered the way the results header reads it: "(0,23 detik)". */
-export function formatSeconds(tookMs: number): string {
-  return `${twoDecimals.format(tookMs / 1000)} detik`;
-}
-
-/** Engine timing at millisecond resolution, for benchmark comparisons. */
+/** Engine timing at millisecond resolution — dipakai di halaman search maupun benchmark. */
 export function formatMs(tookMs: number): string {
   return `${integer.format(Math.round(tookMs))} ms`;
 }

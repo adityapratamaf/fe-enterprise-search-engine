@@ -182,6 +182,6 @@ export const POPULAR_QUERIES = [
   "SPBU Jakarta Selatan",
   "Pertalite",
   "Jl Sudirman",
-  "Fasilitas Mushola",
+  "Pom Bensin Jogjakarta",
   "SPBU dengan Pertamax Turbo",
 ];
