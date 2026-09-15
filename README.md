@@ -62,6 +62,15 @@ melaporkan keterbatasan itu lewat `kemampuan` serta `catatan` — persis seperti
 backend. 26 SPBU dipakai sebagai fixture, memakai kode regional, produk, dan
 fasilitas yang sama dengan seeder backend.
 
+Pencarian lewat foto (tombol kamera di sebelah kolom pencarian) memanggil
+`POST /search/spbu/image` dengan `file` sebagai `FormData`, lalu memakai
+`kodeSpbuTerdeteksi` (atau `kataKunci` bila kode tidak terbaca) dari hasil OCR
+sebagai kata kunci pencarian berikutnya — hasil OCR-nya sendiri tidak
+ditampilkan, hanya kata kuncinya yang mengisi kolom pencarian dan langsung
+menjalankan pencarian seperti biasa. Mock-nya tidak melakukan OCR sungguhan:
+foto apa pun akan selalu "membaca" kode SPBU pertama di fixture, sekadar
+supaya alurnya bisa dicoba tanpa backend.
+
 ### Mengaktifkan backend
 
 ```bash
