@@ -2,7 +2,14 @@ import { useEffect, useRef } from "react";
 
 /** Cukup luas supaya gerakan mouse, ketikan, scroll, atau sentuhan semuanya
  * dianggap aktivitas — bukan cuma klik. */
-const ACTIVITY_EVENTS = ["mousedown", "mousemove", "keydown", "scroll", "touchstart", "wheel"] as const;
+const ACTIVITY_EVENTS = [
+  "mousedown",
+  "mousemove",
+  "keydown",
+  "scroll",
+  "touchstart",
+  "wheel",
+] as const;
 
 /**
  * Memanggil `onIdle` setelah `timeoutMs` tanpa aktivitas pengguna. Timer dan

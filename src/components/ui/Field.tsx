@@ -1,8 +1,7 @@
 import { forwardRef, type InputHTMLAttributes, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-const FRAME =
-  "flex items-center rounded-xl border border-line-400 bg-white transition";
+const FRAME = "flex items-center rounded-xl border border-line-400 bg-white transition";
 
 const FIELD_SIZES = {
   sm: { frame: "px-2.5", control: "h-8 text-[11px]" },

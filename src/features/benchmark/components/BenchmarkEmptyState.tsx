@@ -36,10 +36,7 @@ export function BenchmarkEmptyState({ onRun, disabled }: { onRun: () => void; di
 
         <ul className="mx-auto mt-8 grid max-w-3xl gap-3 text-left sm:grid-cols-3">
           {BENCHMARK_FEATURES.map((feature) => (
-            <li
-              key={feature.title}
-              className="rounded-xl border border-line-200 bg-white p-3"
-            >
+            <li key={feature.title} className="rounded-xl border border-line-200 bg-white p-3">
               <span className={`grid h-8 w-8 place-items-center rounded-lg ${feature.tone}`}>
                 <Icon name={feature.icon} className="text-base" />
               </span>

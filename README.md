@@ -90,15 +90,15 @@ login → dilempar ke `/login`), dan `/login` sendiri diproteksi
 
 Endpoint yang dipetakan di layer API:
 
-| Endpoint                      | Permission       | Dipakai untuk                               |
-| ----------------------------- | ---------------- | ------------------------------------------- |
-| `POST /auth/login`            | —                | Login, menyimpan token + daftar permission  |
-| `POST /auth/refresh`          | —                | Perpanjangan sesi otomatis saat 401         |
-| `POST /auth/logout`           | (login)          | Keluar                                      |
-| `GET /search/spbu`            | `search.view`    | Hasil pencarian, facet, kemampuan mesin     |
-| `GET /search/spbu/suggestion` | `search.view`    | Saran ketik-langsung                        |
-| `POST /search/spbu/image`     | `search.view`    | Pencarian dari foto (OCR)                   |
-| `GET /search/spbu/benchmark`  | `search.execute` | Halaman `/benchmark`: adu cepat ES vs SQL   |
+| Endpoint                      | Permission       | Dipakai untuk                              |
+| ----------------------------- | ---------------- | ------------------------------------------ |
+| `POST /auth/login`            | —                | Login, menyimpan token + daftar permission |
+| `POST /auth/refresh`          | —                | Perpanjangan sesi otomatis saat 401        |
+| `POST /auth/logout`           | (login)          | Keluar                                     |
+| `GET /search/spbu`            | `search.view`    | Hasil pencarian, facet, kemampuan mesin    |
+| `GET /search/spbu/suggestion` | `search.view`    | Saran ketik-langsung                       |
+| `POST /search/spbu/image`     | `search.view`    | Pencarian dari foto (OCR)                  |
+| `GET /search/spbu/benchmark`  | `search.execute` | Halaman `/benchmark`: adu cepat ES vs SQL  |
 
 **Tidak ada** endpoint `GET /search/spbu/{kode}`. Backend sengaja mengirim
 dokumen SPBU secara utuh di setiap hasil pencarian, sehingga panel detail tidak
