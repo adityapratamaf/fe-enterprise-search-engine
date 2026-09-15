@@ -83,7 +83,7 @@ export function LoginPage() {
           <h1 className="text-4xl font-bold leading-tight text-ink-900">{LOGIN_TAGLINE}</h1>
           <p className="mt-4 max-w-md text-sm leading-6 text-ink-500">{LOGIN_SUBTITLE}</p>
 
-          <form onSubmit={submit} className="mt-9 space-y-4" noValidate>
+          <form onSubmit={submit} className="mt-5 space-y-4" noValidate>
             {error && (
               <p
                 role="alert"
@@ -150,14 +150,14 @@ export function LoginPage() {
           </form>
 
           <div className="mt-6 flex items-start gap-3 rounded-xl bg-surface-sunken p-4">
-            <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white text-brand-600">
+            <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white text-brand-600">
               <Icon name="bar-chart-2-line" />
             </div>
             <p className="text-xs leading-5 text-ink-600">{LOGIN_NOTE}</p>
           </div>
 
           <p className="mt-10 text-xs text-ink-400">
-            © {new Date().getFullYear()} PT Pertamina (Persero). All rights reserved.
+            © {new Date().getFullYear()} All rights reserved.
           </p>
         </div>
       </div>
