@@ -15,7 +15,7 @@ export function SearchHero({ keyword, engine, onSubmit }: Props) {
   return (
     <section
       aria-labelledby="search-heading"
-      className="relative overflow-hidden border-b border-line-200 bg-surface-accent"
+      className="relative border-b border-line-200 bg-surface-accent"
     >
       {/*
         Decorative backdrop: the photograph masked into the tinted ground rather
