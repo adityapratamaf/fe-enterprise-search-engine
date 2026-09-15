@@ -21,11 +21,11 @@ export const routes: RouteObject[] = [
     errorElement: <RouteError />,
     children: [
       /**
-       * "/" is no longer a page of its own. Redirecting from a loader rather
-       * than rendering `<Navigate>` means no component mounts just to bounce
-       * straight back out.
+       * "/" is no longer a page of its own. Default tujuannya /login — kalau
+       * ternyata sudah punya sesi, `RedirectIfAuthenticated` yang melempar ke
+       * /search, jadi urutan ini tidak mengubah perilaku untuk yang sudah masuk.
        */
-      { index: true, loader: () => redirect(ROUTES.search) },
+      { index: true, loader: () => redirect(ROUTES.login) },
       {
         lazy: async () => ({
           Component: (await import("@/features/auth/RedirectIfAuthenticated"))
