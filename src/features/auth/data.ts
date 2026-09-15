@@ -34,9 +34,6 @@ export const LOGIN_SUBTITLE = "Masuk untuk melakukan pencarian dan analitik data
 export const LOGIN_NOTE =
   "Satu platform untuk data SPBU yang lebih terintegrasi, akurat, dan berdampak bagi Indonesia.";
 
-/** Caption over the showcase photo — distinct copy from the header tagline. */
-export const LOGIN_PHOTO_CAPTION = ["Pertamina untuk", "Indonesia yang Lebih Baik"];
-
 export const LOGIN_SPLASH_IMAGE = "/spbu-login.png";
 /** Faded into the form panel's backdrop as a watermark, not shown at full size. */
 export const LOGIN_WATERMARK = "/pertamina-icon.png";

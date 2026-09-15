@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { isApiError } from "@/api";
-import { Button, Checkbox, Icon, Input, Spinner } from "@/components/ui";
+import { Button, Icon, Input, Spinner } from "@/components/ui";
 import { BRAND_LOGO } from "@/config/branding";
 import { ROUTES } from "@/config/routes";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   LOGIN_HIGHLIGHTS,
   LOGIN_NOTE,
-  LOGIN_PHOTO_CAPTION,
   LOGIN_SPLASH_IMAGE,
   LOGIN_SUBTITLE,
   LOGIN_TAGLINE,
@@ -24,7 +23,6 @@ export function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -144,18 +142,6 @@ export function LoginPage() {
               />
             </div>
 
-            <label
-              htmlFor="remember-me"
-              className="flex items-center gap-2 text-xs font-medium text-ink-700"
-            >
-              <Checkbox
-                id="remember-me"
-                checked={rememberMe}
-                onChange={(event) => setRememberMe(event.target.checked)}
-              />
-              Ingat saya
-            </label>
-
             <Button type="submit" size="lg" className="w-full" disabled={submitting}>
               {submitting ? <Spinner size="sm" label="Memproses" /> : null}
               {submitting ? "Memproses..." : "Masuk"}
@@ -186,13 +172,6 @@ export function LoginPage() {
           className="absolute inset-0 bg-gradient-to-t from-surface-inverse/85 via-surface-inverse/10 to-transparent"
           aria-hidden
         />
-        <p className="absolute right-10 top-10 max-w-[240px] border-l border-white/60 pl-4 text-sm leading-5 text-white">
-          {LOGIN_PHOTO_CAPTION.map((line) => (
-            <span key={line} className="block">
-              {line}
-            </span>
-          ))}
-        </p>
         <ul className="absolute bottom-10 left-10 right-10 grid grid-cols-3 gap-5 text-white">
           {LOGIN_HIGHLIGHTS.map((item) => (
             <li key={item.title}>
