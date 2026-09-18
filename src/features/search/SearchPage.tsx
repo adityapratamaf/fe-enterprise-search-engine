@@ -27,6 +27,7 @@ export function SearchPage() {
     clearFilter,
     resetFilters,
     setBounds,
+    setNear,
   } = useSearchState();
 
   /**
@@ -95,10 +96,17 @@ export function SearchPage() {
 
   const labels = useMemo(() => buildLabelMap(items), [items]);
 
+  const handleNearMe = useCallback((lat: number, lon: number) => setNear({ lat, lon }), [setNear]);
+
   if (!hasSearched) {
     return (
       <div className="flex min-h-[calc(100vh-58px)] flex-col">
-        <SearchHero keyword={state.keyword} engine={state.engine} onSubmit={submitKeyword} />
+        <SearchHero
+          keyword={state.keyword}
+          engine={state.engine}
+          onSubmit={submitKeyword}
+          onNearMe={handleNearMe}
+        />
         <SearchLanding onPick={submitKeyword} className="flex-1" />
       </div>
     );
@@ -106,7 +114,12 @@ export function SearchPage() {
 
   return (
     <div className="min-h-[calc(100vh-58px)]">
-      <SearchHero keyword={state.keyword} engine={state.engine} onSubmit={submitKeyword} />
+      <SearchHero
+        keyword={state.keyword}
+        engine={state.engine}
+        onSubmit={submitKeyword}
+        onNearMe={handleNearMe}
+      />
 
       <div className="mx-auto grid max-w-[1540px] grid-cols-1 items-start gap-3.5 px-4 py-3.5 sm:px-5 lg:grid-cols-[268px_minmax(0,1fr)_410px] lg:px-7">
         <FilterSidebar

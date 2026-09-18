@@ -9,9 +9,10 @@ type Props = {
   keyword: string;
   engine: SearchEngineKind;
   onSubmit: (keyword: string, engine?: SearchEngineKind) => void;
+  onNearMe: (lat: number, lon: number) => void;
 };
 
-export function SearchHero({ keyword, engine, onSubmit }: Props) {
+export function SearchHero({ keyword, engine, onSubmit, onNearMe }: Props) {
   return (
     <section
       aria-labelledby="search-heading"
@@ -46,7 +47,7 @@ export function SearchHero({ keyword, engine, onSubmit }: Props) {
           </p>
 
           <div className="mt-5">
-            <SearchBar keyword={keyword} engine={engine} onSubmit={onSubmit} />
+            <SearchBar keyword={keyword} engine={engine} onSubmit={onSubmit} onNearMe={onNearMe} />
           </div>
 
           <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5 text-[10px] text-ink-600">

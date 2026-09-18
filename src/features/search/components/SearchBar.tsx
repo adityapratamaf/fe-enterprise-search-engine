@@ -4,6 +4,7 @@ import { Icon, Input, Spinner } from "@/components/ui";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { cn } from "@/lib/utils";
 import { ImageValidationError, useImageSearch } from "../hooks/useImageSearch";
+import { GeolocationError, useNearbySearch } from "../hooks/useNearbySearch";
 import { useSpbuSuggestions } from "../hooks/useSpbuSuggestions";
 import { EngineButton } from "./EngineButton";
 
@@ -11,17 +12,19 @@ type Props = {
   keyword: string;
   engine: SearchEngineKind;
   onSubmit: (keyword: string, engine?: SearchEngineKind) => void;
+  onNearMe: (lat: number, lon: number) => void;
 };
 
-export function SearchBar({ keyword, engine, onSubmit }: Props) {
+export function SearchBar({ keyword, engine, onSubmit, onNearMe }: Props) {
   const [draft, setDraft] = useState(keyword);
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
-  const [imageError, setImageError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const listboxId = useId();
   const imageSearch = useImageSearch();
+  const nearbySearch = useNearbySearch();
   const { items, isLoading } = useSpbuSuggestions(draft, open);
 
   /**
@@ -71,23 +74,36 @@ export function SearchBar({ keyword, engine, onSubmit }: Props) {
   };
 
   const handleFile = async (file: File) => {
-    setImageError(null);
+    setActionError(null);
     try {
       const result = await imageSearch.mutateAsync(file);
       const derived = result.kodeSpbuTerdeteksi ?? result.kataKunci;
       if (!derived.trim()) {
-        setImageError("Tidak ada teks yang dapat dibaca dari gambar ini.");
+        setActionError("Tidak ada teks yang dapat dibaca dari gambar ini.");
         return;
       }
       setDraft(derived);
       submit(derived, "Elasticsearch");
     } catch (error) {
-      setImageError(
+      setActionError(
         error instanceof ImageValidationError
           ? error.message
           : isApiError(error)
             ? error.message
             : "Gambar gagal diproses.",
+      );
+    }
+  };
+
+  const handleLocate = async () => {
+    setActionError(null);
+    try {
+      const coords = await nearbySearch.mutateAsync();
+      setOpen(false);
+      onNearMe(coords.latitude, coords.longitude);
+    } catch (error) {
+      setActionError(
+        error instanceof GeolocationError ? error.message : "Gagal mendapatkan lokasi.",
       );
     }
   };
@@ -210,6 +226,24 @@ export function SearchBar({ keyword, engine, onSubmit }: Props) {
           />
         </label>
 
+        <button
+          type="button"
+          onClick={() => void handleLocate()}
+          disabled={nearbySearch.isPending}
+          aria-label="Cari SPBU terdekat"
+          className={cn(
+            "flex h-12 w-full shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-300 bg-white text-brand-600 shadow-sm transition hover:border-brand-300 hover:bg-brand-50 md:w-12",
+            nearbySearch.isPending && "pointer-events-none opacity-70",
+          )}
+        >
+          <span className="sr-only">Cari SPBU terdekat</span>
+          {nearbySearch.isPending ? (
+            <Spinner size="sm" label="Mendeteksi lokasi" />
+          ) : (
+            <Icon name="map-pin-user-line" className="text-xl" />
+          )}
+        </button>
+
         <EngineButton
           icon="search-line"
           label="Search Elasticsearch"
@@ -229,9 +263,9 @@ export function SearchBar({ keyword, engine, onSubmit }: Props) {
         />
       </div>
 
-      {imageError && (
+      {actionError && (
         <p role="alert" className="mt-2 text-left text-xs font-medium text-danger-500">
-          {imageError}
+          {actionError}
         </p>
       )}
     </div>

@@ -17,6 +17,8 @@ export type SearchState = {
   filters: SearchFilters;
   /** Viewport filter behind "Cari di area peta ini"; null when switched off. */
   bounds: MapBounds | null;
+  /** Titik dari "SPBU terdekat"; null saat tidak dipakai. */
+  near: { lat: number; lon: number } | null;
 };
 
 /** Selected facet values, keyed by facet. OR within a key, AND across keys. */

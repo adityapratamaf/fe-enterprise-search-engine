@@ -11,6 +11,7 @@ import {
   FACET_SIZE,
   FACILITY_ICONS,
   FALLBACK_FACILITY_ICON,
+  NEARBY_RADIUS_KM,
   OPEN_24H_CODE,
   REGIONAL_NAMES,
   QUERY_KEYS,
@@ -55,6 +56,19 @@ function serializeBounds(bounds: MapBounds): string {
     .join(",");
 }
 
+/** Parses "lat,lon"; anything malformed disables the filter. */
+function parseNear(value: string | null): SearchState["near"] {
+  if (!value) return null;
+  const parts = value.split(",").map(Number);
+  if (parts.length !== 2 || parts.some((n) => !Number.isFinite(n))) return null;
+  const [lat, lon] = parts as [number, number];
+  return { lat, lon };
+}
+
+function serializeNear(near: NonNullable<SearchState["near"]>): string {
+  return [near.lat, near.lon].map((n) => n.toFixed(5)).join(",");
+}
+
 export function readSearchState(params: URLSearchParams): SearchState {
   const engine = params.get(QUERY_KEYS.engine);
 
@@ -72,6 +86,7 @@ export function readSearchState(params: URLSearchParams): SearchState {
     ulasanMin: parseNumber(params.get(QUERY_KEYS.ulasanMin)),
     filters,
     bounds: parseBounds(params.get(QUERY_KEYS.bounds)),
+    near: parseNear(params.get(QUERY_KEYS.near)),
   };
 }
 
@@ -89,6 +104,7 @@ export function writeSearchState(state: SearchState): URLSearchParams {
   if (state.ulasanMin !== undefined) params.set(QUERY_KEYS.ulasanMin, String(state.ulasanMin));
 
   if (state.bounds) params.set(QUERY_KEYS.bounds, serializeBounds(state.bounds));
+  if (state.near) params.set(QUERY_KEYS.near, serializeNear(state.near));
 
   for (const key of FACET_KEYS) {
     for (const value of state.filters[key]) params.append(key, value);
@@ -126,6 +142,11 @@ export function toSearchRequest(state: SearchState): SearchSpbuParams {
     params.latMax = state.bounds.latMax;
     params.lonMax = state.bounds.lonMax;
   }
+  if (state.near) {
+    params.lat = state.near.lat;
+    params.lon = state.near.lon;
+    params.radiusKm = NEARBY_RADIUS_KM;
+  }
 
   for (const key of FACET_KEYS) {
     const values = state.filters[key];
@@ -144,7 +165,8 @@ export function countActiveFilters(state: SearchState): number {
     facetCount +
     (state.ratingMin === undefined ? 0 : 1) +
     (state.ulasanMin === undefined ? 0 : 1) +
-    (state.bounds === null ? 0 : 1)
+    (state.bounds === null ? 0 : 1) +
+    (state.near === null ? 0 : 1)
   );
 }
 

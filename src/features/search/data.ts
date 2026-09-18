@@ -17,10 +17,15 @@ export const QUERY_KEYS = {
   ulasanMin: "ulasan",
   /** "latMin,lonMin,latMax,lonMax" — one key keeps the URL readable. */
   bounds: "area",
+  /** "lat,lon" — titik dari tombol "SPBU terdekat". */
+  near: "near",
 } as const;
 
 export const DEFAULT_PAGE_SIZE = 10;
 export const DEFAULT_ENGINE: SearchEngineKind = "Elasticsearch";
+
+/** Radius tetap untuk "SPBU terdekat" — backend hanya menerima satu nilai per permintaan. */
+export const NEARBY_RADIUS_KM = 10;
 
 /** Provinsi and kota need the full list so the panel can filter client-side. */
 export const FACET_SIZE = 600;

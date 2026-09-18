@@ -72,6 +72,7 @@ export function useSearchState() {
       ratingMin: undefined,
       ulasanMin: undefined,
       bounds: null,
+      near: null,
     });
   }, [patch]);
 
@@ -94,6 +95,14 @@ export function useSearchState() {
     [patch],
   );
 
+  /** Tombol "SPBU terdekat": pasang titik lokasi dan langsung urutkan by jarak. */
+  const setNear = useCallback(
+    (near: SearchState["near"]) => {
+      patch({ near, sortBy: near ? "jarak" : state.sortBy, isDescending: false });
+    },
+    [patch, state.sortBy],
+  );
+
   return {
     state,
     request: useMemo(() => toSearchRequest(state), [state]),
@@ -110,5 +119,6 @@ export function useSearchState() {
     clearFilter,
     resetFilters,
     setBounds,
+    setNear,
   };
 }
