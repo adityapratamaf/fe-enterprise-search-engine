@@ -5,6 +5,7 @@ import { ROUTES } from "@/config/routes";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { BRAND_LOGO, BRAND_TAGLINE } from "@/config/branding";
+import { TopLoadingBar } from "./TopLoadingBar";
 import { UserMenu } from "./UserMenu";
 
 /**
@@ -90,6 +91,8 @@ export function Topbar({ onOpenNav }: { onOpenNav: () => void }) {
           </span>
         </div>
       </div>
+
+      <TopLoadingBar />
     </header>
   );
 }

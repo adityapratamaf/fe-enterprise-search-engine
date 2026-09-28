@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen, within } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { NAV_ITEMS } from "@/config/navigation";
@@ -7,12 +8,18 @@ import { BRAND_TAGLINE } from "@/config/branding";
 import { Topbar } from "./Topbar";
 
 function renderTopbar(initialUrl = "/") {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false, gcTime: 0 } },
+  });
+
   return render(
-    <MemoryRouter initialEntries={[initialUrl]}>
-      <AuthProvider>
-        <Topbar onOpenNav={vi.fn()} />
-      </AuthProvider>
-    </MemoryRouter>,
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter initialEntries={[initialUrl]}>
+        <AuthProvider>
+          <Topbar onOpenNav={vi.fn()} />
+        </AuthProvider>
+      </MemoryRouter>
+    </QueryClientProvider>,
   );
 }
 

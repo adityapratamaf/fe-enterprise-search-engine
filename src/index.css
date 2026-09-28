@@ -85,6 +85,54 @@
       animation: none;
     }
   }
+
+  /* Indeterminate line under the topbar while a search is in flight. Two bars
+     sliding at different speeds/delays is the standard Material Design
+     pattern — a single sweeping bar at 3px reads as choppy, not smooth. */
+  @keyframes top-loading-bar-1 {
+    0% {
+      left: -35%;
+      right: 100%;
+    }
+    60%,
+    100% {
+      left: 100%;
+      right: -90%;
+    }
+  }
+
+  @keyframes top-loading-bar-2 {
+    0% {
+      left: -200%;
+      right: 100%;
+    }
+    60%,
+    100% {
+      left: 107%;
+      right: -8%;
+    }
+  }
+
+  .top-loading-bar span {
+    @apply absolute top-0 h-full bg-brand-600;
+  }
+
+  .top-loading-bar span:first-child {
+    animation: top-loading-bar-1 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+  }
+
+  .top-loading-bar span:last-child {
+    animation: top-loading-bar-2 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) infinite;
+    animation-delay: 1.15s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .top-loading-bar span {
+      animation: none;
+      left: 0;
+      right: 0;
+    }
+  }
 }
 
 /* ---------------------------------------------------------------------------
