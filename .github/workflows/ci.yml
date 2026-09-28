@@ -19,8 +19,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          # Matches the "engines" floor in package.json.
-          node-version: 20
+          # vitest 5 requires Node ^22.12.0 || ^24.0.0 || >=26.0.0 — Node 20
+          # installs fine and even runs tsc/eslint/vite, but the "Test" step
+          # crashes immediately under it, matching the "engines" floor below.
+          node-version: 24
           cache: npm
 
       - name: Install
