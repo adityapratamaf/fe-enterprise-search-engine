@@ -114,7 +114,7 @@ export function SearchBar({ keyword, engine, mode, onSubmit, onNearMe, onModeCha
 
   return (
     <div className="w-full" ref={containerRef}>
-      <div className="flex w-full flex-col gap-2.5 md:flex-row md:items-start">
+      <div className="flex w-full flex-col gap-2.5 lg:flex-row lg:items-start">
         {/* Relative here, not on the row: the suggestion list anchors to the
             input alone, so it cannot stretch under the engine buttons. */}
         <div className="relative min-w-0 flex-1">
@@ -213,7 +213,7 @@ export function SearchBar({ keyword, engine, mode, onSubmit, onNearMe, onModeCha
               : "Aktifkan mode pencarian AI"
           }
           className={cn(
-            "flex h-12 w-full shrink-0 items-center justify-center rounded-xl border shadow-sm transition md:w-12",
+            "flex h-12 w-full shrink-0 items-center justify-center rounded-xl border shadow-sm transition lg:w-12",
             mode === "Ai"
               ? "border-tile-violet-strong bg-tile-violet-strong text-white hover:opacity-90"
               : "border-line-300 bg-white text-tile-violet-strong hover:border-tile-violet-strong hover:bg-tile-violet-soft",
@@ -224,7 +224,7 @@ export function SearchBar({ keyword, engine, mode, onSubmit, onNearMe, onModeCha
 
         <label
           className={cn(
-            "flex h-12 w-full shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-300 bg-white text-brand-600 shadow-sm transition hover:border-brand-300 hover:bg-brand-50 md:w-12",
+            "flex h-12 w-full shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-300 bg-white text-brand-600 shadow-sm transition hover:border-brand-300 hover:bg-brand-50 lg:w-12",
             imageSearch.isPending && "pointer-events-none opacity-70",
           )}
         >
@@ -253,7 +253,7 @@ export function SearchBar({ keyword, engine, mode, onSubmit, onNearMe, onModeCha
           disabled={nearbySearch.isPending}
           aria-label="Cari SPBU terdekat"
           className={cn(
-            "flex h-12 w-full shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-300 bg-white text-brand-600 shadow-sm transition hover:border-brand-300 hover:bg-brand-50 md:w-12",
+            "flex h-12 w-full shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border border-line-300 bg-white text-brand-600 shadow-sm transition hover:border-brand-300 hover:bg-brand-50 lg:w-12",
             nearbySearch.isPending && "pointer-events-none opacity-70",
           )}
         >
@@ -268,10 +268,10 @@ export function SearchBar({ keyword, engine, mode, onSubmit, onNearMe, onModeCha
         <EngineButton
           icon="search-line"
           label="Search Elasticsearch"
-          hint="Pencarian cerdas, toleransi salah ketik"
+          hint="Pencarian cerdas"
           active={engine === "Elasticsearch"}
           onClick={() => submit(draft, "Elasticsearch")}
-          className="w-full md:w-auto"
+          className="w-full lg:w-auto"
         />
 
         <EngineButton
@@ -280,7 +280,7 @@ export function SearchBar({ keyword, engine, mode, onSubmit, onNearMe, onModeCha
           hint="Pencarian standar (LIKE)"
           active={engine === "Sql"}
           onClick={() => submit(draft, "Sql")}
-          className="w-full md:w-auto"
+          className="w-full lg:w-auto"
         />
       </div>
 
