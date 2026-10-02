@@ -212,16 +212,14 @@ export function SearchBar({ keyword, engine, mode, onSubmit, onNearMe, onModeCha
               ? "Mode pencarian AI aktif, klik untuk menonaktifkan"
               : "Aktifkan mode pencarian AI"
           }
-          title="Tafsirkan kalimat pencarian dengan AI"
           className={cn(
-            "flex h-12 w-full shrink-0 items-center justify-center gap-1.5 rounded-xl border text-sm font-semibold shadow-sm transition md:w-auto md:px-3.5",
+            "flex h-12 w-full shrink-0 items-center justify-center rounded-xl border shadow-sm transition md:w-12",
             mode === "Ai"
               ? "border-tile-violet-strong bg-tile-violet-strong text-white hover:opacity-90"
               : "border-line-300 bg-white text-tile-violet-strong hover:border-tile-violet-strong hover:bg-tile-violet-soft",
           )}
         >
           <Icon name="sparkling-2-line" className="text-xl" />
-          AI
         </button>
 
         <label
