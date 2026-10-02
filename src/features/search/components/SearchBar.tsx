@@ -1,5 +1,5 @@
 import { useCallback, useId, useRef, useState } from "react";
-import { isApiError, type SearchEngineKind } from "@/api";
+import { isApiError, type SearchEngineKind, type SearchMode } from "@/api";
 import { Icon, Input, Spinner } from "@/components/ui";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { cn } from "@/lib/utils";
@@ -11,11 +11,13 @@ import { EngineButton } from "./EngineButton";
 type Props = {
   keyword: string;
   engine: SearchEngineKind;
+  mode: SearchMode;
   onSubmit: (keyword: string, engine?: SearchEngineKind) => void;
   onNearMe: (lat: number, lon: number) => void;
+  onModeChange: (mode: SearchMode) => void;
 };
 
-export function SearchBar({ keyword, engine, onSubmit, onNearMe }: Props) {
+export function SearchBar({ keyword, engine, mode, onSubmit, onNearMe, onModeChange }: Props) {
   const [draft, setDraft] = useState(keyword);
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -200,6 +202,27 @@ export function SearchBar({ keyword, engine, onSubmit, onNearMe }: Props) {
             </ul>
           )}
         </div>
+
+        <button
+          type="button"
+          onClick={() => onModeChange(mode === "Ai" ? "Harfiah" : "Ai")}
+          aria-pressed={mode === "Ai"}
+          aria-label={
+            mode === "Ai"
+              ? "Mode pencarian AI aktif, klik untuk menonaktifkan"
+              : "Aktifkan mode pencarian AI"
+          }
+          title="Tafsirkan kalimat pencarian dengan AI"
+          className={cn(
+            "flex h-12 w-full shrink-0 items-center justify-center gap-1.5 rounded-xl border text-sm font-semibold shadow-sm transition md:w-auto md:px-3.5",
+            mode === "Ai"
+              ? "border-tile-violet-strong bg-tile-violet-strong text-white hover:opacity-90"
+              : "border-line-300 bg-white text-tile-violet-strong hover:border-tile-violet-strong hover:bg-tile-violet-soft",
+          )}
+        >
+          <Icon name="sparkling-2-line" className="text-xl" />
+          AI
+        </button>
 
         <label
           className={cn(

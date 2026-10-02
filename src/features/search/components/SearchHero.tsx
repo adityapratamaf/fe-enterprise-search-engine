@@ -1,4 +1,4 @@
-import type { SearchEngineKind } from "@/api";
+import type { SearchEngineKind, SearchMode } from "@/api";
 import { EXAMPLE_QUERIES, HERO_IMAGE } from "../data";
 import { SearchBar } from "./SearchBar";
 
@@ -8,11 +8,13 @@ const FADE_MASK = "linear-gradient(to left, rgba(0,0,0,1) 45%, rgba(0,0,0,0) 100
 type Props = {
   keyword: string;
   engine: SearchEngineKind;
+  mode: SearchMode;
   onSubmit: (keyword: string, engine?: SearchEngineKind) => void;
   onNearMe: (lat: number, lon: number) => void;
+  onModeChange: (mode: SearchMode) => void;
 };
 
-export function SearchHero({ keyword, engine, onSubmit, onNearMe }: Props) {
+export function SearchHero({ keyword, engine, mode, onSubmit, onNearMe, onModeChange }: Props) {
   return (
     <section
       aria-labelledby="search-heading"
@@ -47,7 +49,14 @@ export function SearchHero({ keyword, engine, onSubmit, onNearMe }: Props) {
           </p>
 
           <div className="mt-5">
-            <SearchBar keyword={keyword} engine={engine} onSubmit={onSubmit} onNearMe={onNearMe} />
+            <SearchBar
+              keyword={keyword}
+              engine={engine}
+              mode={mode}
+              onSubmit={onSubmit}
+              onNearMe={onNearMe}
+              onModeChange={onModeChange}
+            />
           </div>
 
           <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5 text-[10px] text-ink-600">

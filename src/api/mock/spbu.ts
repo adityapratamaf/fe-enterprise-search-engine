@@ -15,6 +15,10 @@ import { SPBU_FIXTURES } from "./dataset";
 /** Enough delay that loading skeletons are actually visible while developing. */
 const LATENCY_MS = { search: 260, suggestion: 90, image: 900, benchmark: 700 };
 
+/** Mirrors `MOCK_AI_LATENCY_MS` in `engine.ts` — added on top of `search` so the
+ * wait actually matches what the mock `tafsir.durasiMs` reports. */
+const AI_MODE_EXTRA_LATENCY_MS = 900;
+
 function delay<T>(value: T, ms: number, signal?: AbortSignal): Promise<T> {
   return new Promise((resolve, reject) => {
     if (signal?.aborted) {
@@ -42,7 +46,11 @@ function delay<T>(value: T, ms: number, signal?: AbortSignal): Promise<T> {
  */
 export const spbuMockApi = {
   search: (params: SearchSpbuParams, signal?: AbortSignal): Promise<SearchSpbuResponse> =>
-    delay(runMockSearch(params), LATENCY_MS.search, signal),
+    delay(
+      runMockSearch(params),
+      LATENCY_MS.search + (params.mode === "Ai" ? AI_MODE_EXTRA_LATENCY_MS : 0),
+      signal,
+    ),
 
   suggestion: (q: string, limit = 10, signal?: AbortSignal): Promise<SpbuSuggestionResponse> =>
     delay(runMockSuggestion(q, limit), LATENCY_MS.suggestion, signal),

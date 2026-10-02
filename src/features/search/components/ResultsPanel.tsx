@@ -1,4 +1,4 @@
-import { ApiError, type SearchSpbuResponse, type SpbuSearchItem } from "@/api";
+import { ApiError, type SearchMode, type SearchSpbuResponse, type SpbuSearchItem } from "@/api";
 import { Button, Card, Dropdown, Icon, Skeleton, Spinner } from "@/components/ui";
 import { formatCount, formatMs } from "@/utils/format";
 import { RESULT_STAGGER_SECONDS, SORT_OPTIONS } from "../data";
@@ -6,12 +6,15 @@ import { parseSortValue, toSortValue } from "../utils";
 import { EngineNotice } from "./EngineNotice";
 import { Pagination } from "./Pagination";
 import { SpbuResultCard } from "./SpbuResultCard";
+import { TafsirNotice } from "./TafsirNotice";
 
 type Props = {
   data: SearchSpbuResponse | undefined;
   error: unknown;
   isLoading: boolean;
   isFetching: boolean;
+  /** The mode just requested — used for the loading hint, before `data` arrives. */
+  mode: SearchMode;
   page: number;
   sortBy: string;
   isDescending: boolean;
@@ -27,6 +30,7 @@ export function ResultsPanel({
   error,
   isLoading,
   isFetching,
+  mode,
   page,
   sortBy,
   isDescending,
@@ -45,7 +49,14 @@ export function ResultsPanel({
       <div className="flex flex-col gap-2 border-b border-line-100 px-4 py-2.5 text-[12px] text-ink-600 sm:flex-row sm:items-center sm:justify-between">
         <p aria-live="polite" className="flex items-center gap-2">
           {isLoading ? (
-            <Skeleton className="h-3 w-52" />
+            mode === "Ai" ? (
+              <span className="flex items-center gap-2 text-tile-violet-strong">
+                <Spinner size="sm" />
+                Menafsirkan kalimat pencarian dengan AI...
+              </span>
+            ) : (
+              <Skeleton className="h-3 w-52" />
+            )
           ) : data ? (
             <>
               <span>
@@ -53,7 +64,15 @@ export function ResultsPanel({
                 <b className="font-semibold text-ink-900">{formatCount(data.totalCount)}</b> hasil (
                 {formatMs(data.tookMs)})
               </span>
-              {isFetching && <Spinner size="sm" className="text-brand-600" />}
+              {isFetching &&
+                (mode === "Ai" ? (
+                  <span className="flex items-center gap-1.5 text-tile-violet-strong">
+                    <Spinner size="sm" />
+                    Menafsirkan dengan AI...
+                  </span>
+                ) : (
+                  <Spinner size="sm" className="text-brand-600" />
+                ))}
             </>
           ) : null}
         </p>
@@ -73,6 +92,7 @@ export function ResultsPanel({
         </div>
       </div>
 
+      {data?.tafsir && <TafsirNotice tafsir={data.tafsir} />}
       {data && <EngineNotice capabilities={data.kemampuan} notes={data.catatan} />}
 
       {error ? (

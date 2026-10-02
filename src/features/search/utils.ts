@@ -7,6 +7,7 @@ import {
 } from "@/api";
 import {
   DEFAULT_ENGINE,
+  DEFAULT_MODE,
   DEFAULT_PAGE_SIZE,
   FACET_SIZE,
   FACILITY_ICONS,
@@ -75,9 +76,12 @@ export function readSearchState(params: URLSearchParams): SearchState {
   const filters = emptyFilters();
   for (const key of FACET_KEYS) filters[key] = params.getAll(key);
 
+  const mode = params.get(QUERY_KEYS.mode);
+
   return {
     keyword: params.get(QUERY_KEYS.keyword) ?? "",
     engine: engine === "Sql" ? "Sql" : DEFAULT_ENGINE,
+    mode: mode === "Ai" ? "Ai" : DEFAULT_MODE,
     page: parsePositiveInt(params.get(QUERY_KEYS.page), 1),
     pageSize: parsePositiveInt(params.get(QUERY_KEYS.size), DEFAULT_PAGE_SIZE),
     sortBy: params.get(QUERY_KEYS.sort) ?? "",
@@ -96,6 +100,7 @@ export function writeSearchState(state: SearchState): URLSearchParams {
 
   if (state.keyword.trim()) params.set(QUERY_KEYS.keyword, state.keyword.trim());
   if (state.engine !== DEFAULT_ENGINE) params.set(QUERY_KEYS.engine, state.engine);
+  if (state.mode !== DEFAULT_MODE) params.set(QUERY_KEYS.mode, state.mode);
   if (state.page > 1) params.set(QUERY_KEYS.page, String(state.page));
   if (state.pageSize !== DEFAULT_PAGE_SIZE) params.set(QUERY_KEYS.size, String(state.pageSize));
   if (state.sortBy) params.set(QUERY_KEYS.sort, state.sortBy);
@@ -117,6 +122,7 @@ export function writeSearchState(state: SearchState): URLSearchParams {
 export function toSearchRequest(state: SearchState): SearchSpbuParams {
   const params: SearchSpbuParams = {
     engine: state.engine,
+    mode: state.mode,
     pageNumber: state.page,
     pageSize: state.pageSize,
     /**

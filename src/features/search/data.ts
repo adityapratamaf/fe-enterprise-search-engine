@@ -1,4 +1,4 @@
-import type { FacetKey, SearchCapabilities, SearchEngineKind } from "@/api";
+import type { FacetKey, SearchCapabilities, SearchEngineKind, SearchMode } from "@/api";
 import type { SortOption } from "./types";
 
 // ---------------------------------------------------------------------------
@@ -9,6 +9,7 @@ import type { SortOption } from "./types";
 export const QUERY_KEYS = {
   keyword: "q",
   engine: "engine",
+  mode: "mode",
   page: "page",
   size: "size",
   sort: "sort",
@@ -23,6 +24,8 @@ export const QUERY_KEYS = {
 
 export const DEFAULT_PAGE_SIZE = 10;
 export const DEFAULT_ENGINE: SearchEngineKind = "Elasticsearch";
+/** "Harfiah" matches the keyword as typed; the AI toggle switches to "Ai". */
+export const DEFAULT_MODE: SearchMode = "Harfiah";
 
 /** Radius tetap untuk "SPBU terdekat" — backend hanya menerima satu nilai per permintaan. */
 export const NEARBY_RADIUS_KM = 10;

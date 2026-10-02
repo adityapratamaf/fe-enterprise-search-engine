@@ -6,6 +6,10 @@ import type { PaginationParams } from "./common";
  */
 export type SearchEngineKind = "Elasticsearch" | "Sql";
 
+/** "Harfiah" matches the keyword as typed; "Ai" lets an LLM turn a natural-
+ * language sentence into the structured filters below before searching. */
+export type SearchMode = "Harfiah" | "Ai";
+
 /** Facet keys the backend fills in `SearchSpbuResponse.facets`. */
 export const FACET_KEYS = [
   "regional",
@@ -27,6 +31,7 @@ export type SortField = (typeof SORT_FIELDS)[number];
 /** Mirror of `SearchSpbuRequest`. Array filters take the exact facet values. */
 export type SearchSpbuParams = PaginationParams & {
   engine?: SearchEngineKind;
+  mode?: SearchMode;
   regional?: string[];
   provinsi?: string[];
   kota?: string[];
@@ -105,6 +110,30 @@ export type SpbuSearchItem = {
   jarakKm: number | null;
 };
 
+/**
+ * What an LLM extracted from a natural-language query in "Ai" mode — read-only:
+ * the backend already applied these to produce `items` before this ever reaches
+ * the frontend, so nothing here needs to be merged back into the filter state.
+ */
+export type TafsirAi = {
+  search: string | null;
+  regional: string[] | null;
+  provinsi: string[] | null;
+  kota: string[] | null;
+  produk: string[] | null;
+  fasilitas: string[] | null;
+  status: string[] | null;
+  tipeKepemilikan: string[] | null;
+  ratingMin: number | null;
+  ulasanMin: number | null;
+  radiusKm: number | null;
+  sortBy: string | null;
+  isDescending: boolean | null;
+  /** How long the LLM round-trip itself took — separate from `tookMs`. */
+  durasiMs: number;
+  provider: string;
+};
+
 export type SearchSpbuResponse = {
   items: SpbuSearchItem[];
   totalCount: number;
@@ -114,6 +143,7 @@ export type SearchSpbuResponse = {
   /** Engine-side execution time; this is the "(0,23 detik)" number. */
   tookMs: number;
   engine: SearchEngineKind;
+  mode: SearchMode;
   /** Ordering actually applied, e.g. "Relevansi" or "Nama A - Z". */
   urutan: string;
   /** null when the engine cannot produce facets — not the same as "no results". */
@@ -121,6 +151,8 @@ export type SearchSpbuResponse = {
   kemampuan: SearchCapabilities;
   /** Parts of the request that could not be honoured, in plain Indonesian. */
   catatan: string[];
+  /** Only present when `mode` was "Ai". */
+  tafsir: TafsirAi | null;
 };
 
 export type SpbuSuggestionItem = {

@@ -1,4 +1,4 @@
-import type { FacetKey, SearchEngineKind } from "@/api";
+import type { FacetKey, SearchEngineKind, SearchMode } from "@/api";
 import type { MapBounds } from "@/types/map";
 
 /**
@@ -8,6 +8,7 @@ import type { MapBounds } from "@/types/map";
 export type SearchState = {
   keyword: string;
   engine: SearchEngineKind;
+  mode: SearchMode;
   page: number;
   pageSize: number;
   sortBy: string;

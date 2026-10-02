@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import type { FacetKey, SearchEngineKind } from "@/api";
+import type { FacetKey, SearchEngineKind, SearchMode } from "@/api";
 import type { MapBounds } from "@/types/map";
 import {
   countActiveFilters,
@@ -110,6 +110,7 @@ export function useSearchState() {
     patch,
     submitKeyword,
     setEngine: useCallback((engine: SearchEngineKind) => patch({ engine }), [patch]),
+    setMode: useCallback((mode: SearchMode) => patch({ mode }), [patch]),
     setSort: useCallback(
       (sortBy: string, isDescending: boolean) => patch({ sortBy, isDescending }),
       [patch],

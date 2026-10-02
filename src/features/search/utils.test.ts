@@ -12,7 +12,7 @@ import {
   toSortValue,
   writeSearchState,
 } from "./utils";
-import { DEFAULT_ENGINE, DEFAULT_PAGE_SIZE } from "./data";
+import { DEFAULT_ENGINE, DEFAULT_MODE, DEFAULT_PAGE_SIZE } from "./data";
 import type { SearchState } from "./types";
 import type { SpbuSearchItem } from "@/api";
 
@@ -20,6 +20,7 @@ function baseState(overrides: Partial<SearchState> = {}): SearchState {
   return {
     keyword: "",
     engine: DEFAULT_ENGINE,
+    mode: DEFAULT_MODE,
     page: 1,
     pageSize: DEFAULT_PAGE_SIZE,
     sortBy: "",

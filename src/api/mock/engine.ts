@@ -6,6 +6,7 @@ import type {
   SearchSpbuParams,
   SearchSpbuResponse,
   SpbuSearchItem,
+  TafsirAi,
 } from "../contracts/spbu";
 import { SPBU_FIXTURES, type SpbuFixture } from "./dataset";
 
@@ -17,6 +18,10 @@ import { SPBU_FIXTURES, type SpbuFixture } from "./dataset";
  * orders alphabetically, and can do none of the rest. That contrast is the whole
  * point of the product, so the preview has to show it rather than fake it.
  */
+
+/** Reported inside the mock `tafsir`; the real Gemini round-trip in the backend
+ * example took ~10s, but that would make local development painful. */
+const MOCK_AI_LATENCY_MS = 900;
 
 const ES_CAPABILITIES: SearchCapabilities = {
   highlight: true,
@@ -432,6 +437,31 @@ export function runMockSearch(params: SearchSpbuParams): SearchSpbuResponse {
     jarakKm: entry.jarakKm === null ? null : Math.round(entry.jarakKm * 10) / 10,
   }));
 
+  const mode = params.mode ?? "Harfiah";
+
+  // Offline stand-in for the LLM step: there is no model to call, so this just
+  // echoes the keyword back as "understood" rather than extracting real filters.
+  const tafsir: TafsirAi | null =
+    mode === "Ai"
+      ? {
+          search: keyword || null,
+          regional: null,
+          provinsi: null,
+          kota: null,
+          produk: null,
+          fasilitas: null,
+          status: null,
+          tipeKepemilikan: null,
+          ratingMin: null,
+          ulasanMin: null,
+          radiusKm: null,
+          sortBy: null,
+          isDescending: null,
+          durasiMs: MOCK_AI_LATENCY_MS,
+          provider: "Gemini (mock)",
+        }
+      : null;
+
   return {
     items,
     totalCount,
@@ -441,10 +471,12 @@ export function runMockSearch(params: SearchSpbuParams): SearchSpbuResponse {
     // SQL is slower on the same corpus; the preview should not pretend otherwise.
     tookMs: engine === "Sql" ? 180 + totalCount * 3 : 12 + totalCount,
     engine,
+    mode,
     urutan: sortLabel(engine, sortBy, descending, keyword !== "", geoActive),
     facets,
     kemampuan: capabilities,
     catatan,
+    tafsir,
   };
 }
 

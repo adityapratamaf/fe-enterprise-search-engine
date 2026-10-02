@@ -28,6 +28,7 @@ export function SearchPage() {
     resetFilters,
     setBounds,
     setNear,
+    setMode,
   } = useSearchState();
 
   /**
@@ -104,8 +105,10 @@ export function SearchPage() {
         <SearchHero
           keyword={state.keyword}
           engine={state.engine}
+          mode={state.mode}
           onSubmit={submitKeyword}
           onNearMe={handleNearMe}
+          onModeChange={setMode}
         />
         <SearchLanding onPick={submitKeyword} className="flex-1" />
       </div>
@@ -117,8 +120,10 @@ export function SearchPage() {
       <SearchHero
         keyword={state.keyword}
         engine={state.engine}
+        mode={state.mode}
         onSubmit={submitKeyword}
         onNearMe={handleNearMe}
+        onModeChange={setMode}
       />
 
       <div className="mx-auto grid max-w-[1540px] grid-cols-1 items-start gap-3.5 px-4 py-3.5 sm:px-5 lg:grid-cols-[268px_minmax(0,1fr)_410px] lg:px-7">
@@ -139,6 +144,7 @@ export function SearchPage() {
           error={error}
           isLoading={isLoading}
           isFetching={isFetching}
+          mode={state.mode}
           page={state.page}
           sortBy={state.sortBy}
           isDescending={state.isDescending}
