@@ -6,6 +6,7 @@ import { ResultsPanel } from "./components/ResultsPanel";
 import { SearchHero } from "./components/SearchHero";
 import { SearchLanding } from "./components/SearchLanding";
 import { SpbuDetailPanel } from "./components/SpbuDetailPanel";
+import { hasGrantedGeolocationPermission, requestCurrentPosition } from "./hooks/useNearbySearch";
 import { useSearchState } from "./hooks/useSearchState";
 import { useSpbuSearch } from "./hooks/useSpbuSearch";
 import { buildLabelMap } from "./utils";
@@ -18,7 +19,7 @@ import { buildLabelMap } from "./utils";
 export function SearchPage() {
   const {
     state,
-    request,
+    request: baseRequest,
     activeFilterCount,
     submitKeyword,
     setSort,
@@ -38,7 +39,53 @@ export function SearchPage() {
    */
   const hasSearched = state.keyword.trim() !== "" || activeFilterCount > 0;
 
+  /**
+   * "Ai" mode gets the user's coordinates attached speculatively, without a
+   * radius — a sentence only turns out to need them once the backend parses
+   * it (e.g. "SPBU terdekat yang ada bengkel"), and `near` already covers the
+   * explicit "SPBU terdekat" button with its own fixed radius.
+   */
+  const [aiCoords, setAiCoords] = useState<{ lat: number; lon: number } | null>(null);
+  const askedForLocationRef = useRef(false);
+
+  useEffect(() => {
+    if (!hasSearched || state.mode !== "Ai" || state.near || aiCoords) return;
+    let cancelled = false;
+
+    void hasGrantedGeolocationPermission().then(async (granted) => {
+      if (!granted || cancelled) return;
+      const coords = await requestCurrentPosition();
+      if (coords && !cancelled) setAiCoords({ lat: coords.latitude, lon: coords.longitude });
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [hasSearched, state.mode, state.near, aiCoords]);
+
+  const request = useMemo(() => {
+    if (state.mode === "Ai" && !state.near && aiCoords) {
+      return { ...baseRequest, lat: aiCoords.lat, lon: aiCoords.lon };
+    }
+    return baseRequest;
+  }, [baseRequest, state.mode, state.near, aiCoords]);
+
   const { data, error, isLoading, isFetching, refetch } = useSpbuSearch(request, hasSearched);
+
+  /**
+   * The backend says the sentence needed a location to resolve (e.g.
+   * "terdekat") but none was sent — ask once, now, and let the search re-fire
+   * with the new coordinates if granted. A denial just leaves `aiCoords` null;
+   * the response's own `catatan` already explains the consequence.
+   */
+  useEffect(() => {
+    if (!data?.perluLokasi || state.near || aiCoords || askedForLocationRef.current) return;
+    askedForLocationRef.current = true;
+
+    void requestCurrentPosition().then((coords) => {
+      if (coords) setAiCoords({ lat: coords.latitude, lon: coords.longitude });
+    });
+  }, [data?.perluLokasi, state.near, aiCoords]);
 
   const [selectedKode, setSelectedKode] = useState<string | null>(null);
 

@@ -300,17 +300,78 @@ function compare(a: Scored, b: Scored, sortBy: string, descending: boolean): num
   }
 }
 
+/** Words that imply "near me" in a free-text "Ai" query. */
+const NEARBY_WORDS = ["terdekat", "dekat", "sekitar"];
+
+/** Facility words an "Ai" query might mention, mapped to the backend's codes. */
+const AI_FACILITY_WORDS: Record<string, string> = {
+  bengkel: "BENGKEL",
+  toilet: "TOILET",
+  musholla: "MUSHOLLA",
+  mushola: "MUSHOLLA",
+  atm: "ATM",
+  minimarket: "MINIMARKET",
+  "isi angin": "ISI_ANGIN",
+  nitrogen: "NITROGEN",
+  "cuci mobil": "CUCI_MOBIL",
+  "rumah makan": "RUMAH_MAKAN",
+  charging: "CHARGING_EV",
+  "24 jam": "BUKA_24_JAM",
+};
+
+/**
+ * Offline stand-in for the LLM step: a small keyword heuristic rather than a
+ * real model. Good enough to exercise the "Ai" flow end to end — detecting
+ * "near me" intent and a facility mention — without calling anything.
+ */
+function interpretAiQuery(rawKeyword: string): {
+  search: string | null;
+  fasilitas: string[] | null;
+  sortBy: string | null;
+} {
+  const lower = rawKeyword.toLowerCase();
+  const impliesNearby = NEARBY_WORDS.some((word) => lower.includes(word));
+
+  const fasilitas = Object.entries(AI_FACILITY_WORDS)
+    .filter(([word]) => lower.includes(word))
+    .map(([, code]) => code);
+
+  let remainder = lower;
+  for (const word of NEARBY_WORDS) remainder = remainder.split(word).join(" ");
+  for (const word of Object.keys(AI_FACILITY_WORDS)) remainder = remainder.split(word).join(" ");
+  remainder = remainder
+    .replace(/\b(spbu|yang|ada|dengan|di|dan)\b/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return {
+    search: remainder || null,
+    fasilitas: fasilitas.length > 0 ? [...new Set(fasilitas)] : null,
+    sortBy: impliesNearby ? "jarak" : null,
+  };
+}
+
 export function runMockSearch(params: SearchSpbuParams): SearchSpbuResponse {
   const engine: SearchEngineKind = params.engine ?? "Elasticsearch";
   const capabilities = engine === "Sql" ? SQL_CAPABILITIES : ES_CAPABILITIES;
   const catatan: string[] = [];
 
-  const keyword = params.search?.trim() ?? "";
+  const mode = params.mode ?? "Harfiah";
+  const rawKeyword = params.search?.trim() ?? "";
+  const aiHint = mode === "Ai" ? interpretAiQuery(rawKeyword) : null;
+
+  const keyword = aiHint ? (aiHint.search ?? "") : rawKeyword;
   const pageSize = Math.max(1, params.pageSize ?? 10);
   const pageNumber = Math.max(1, params.pageNumber ?? 1);
 
-  const hasCoordinates =
-    params.lat !== undefined && params.lon !== undefined && params.radiusKm !== undefined;
+  /**
+   * `lat`+`lon` alone are enough to compute `jarakKm` and sort by distance.
+   * `radiusKm` is a separate, optional filter on top of that — matching the
+   * real API, where the two answer different questions ("where am I" vs.
+   * "cut anything farther than this").
+   */
+  const hasCoordinates = params.lat !== undefined && params.lon !== undefined;
+  const radiusActive = hasCoordinates && params.radiusKm !== undefined;
 
   const hasBounds =
     params.latMin !== undefined &&
@@ -325,10 +386,11 @@ export function runMockSearch(params: SearchSpbuParams): SearchSpbuResponse {
   const boundsActive = hasBounds && capabilities.geo;
 
   if (hasCoordinates && !capabilities.geo) {
-    catatan.push("Penyaring jarak diabaikan: mesin SQL tidak mendukung pencarian radius.");
+    catatan.push("Jarak diabaikan: mesin SQL tidak mendukung fitur geografis.");
   }
 
   const geoActive = hasCoordinates && capabilities.geo;
+  const aiFasilitas = aiHint?.fasilitas ?? [];
 
   // --- keyword + filters ---
   const scored: Scored[] = [];
@@ -343,11 +405,16 @@ export function runMockSearch(params: SearchSpbuParams): SearchSpbuResponse {
     }
     if (params.ulasanMin !== undefined && item.jumlahUlasan < params.ulasanMin) continue;
 
+    // Facility words "Ai" picked out of the sentence (e.g. "...yang ada bengkel").
+    if (aiFasilitas.length > 0 && !aiFasilitas.every((code) => item.fasilitas.includes(code))) {
+      continue;
+    }
+
     const jarakKm = geoActive
       ? haversineKm(params.lat!, params.lon!, item.latitude, item.longitude)
       : null;
 
-    if (geoActive && jarakKm !== null && jarakKm > params.radiusKm!) continue;
+    if (radiusActive && jarakKm !== null && jarakKm > params.radiusKm!) continue;
 
     if (
       boundsActive &&
@@ -403,7 +470,9 @@ export function runMockSearch(params: SearchSpbuParams): SearchSpbuResponse {
   }
 
   // --- ordering ---
-  const sortBy = params.sortBy?.trim().toLowerCase() ?? "";
+  // An explicit `sortBy` always wins; otherwise "Ai" may have inferred "jarak"
+  // from words like "terdekat" with nothing else said about ordering.
+  const sortBy = (params.sortBy?.trim().toLowerCase() || aiHint?.sortBy) ?? "";
   const descending = params.isDescending ?? false;
   const relevanceOrder = engine === "Elasticsearch" && keyword !== "" && sortBy === "";
   const geoSort = sortBy === "jarak" && geoActive;
@@ -420,8 +489,21 @@ export function runMockSearch(params: SearchSpbuParams): SearchSpbuResponse {
     return a.item.nama.localeCompare(b.item.nama, "id-ID");
   });
 
-  if (sortBy === "jarak" && !geoActive) {
-    catatan.push("Pengurutan jarak memerlukan koordinat; hasil diurutkan menurut nama.");
+  /**
+   * Specifically "no coordinates at all" — not "sent them but the SQL engine
+   * can't use them", which `catatan` below already explains on its own. "Ai"
+   * is the one mode where the frontend is expected to retry with the user's
+   * location once this comes back true; a plain `sortBy=jarak` picked from
+   * the dropdown with no coordinates is just a mistake the caller made, not
+   * something to recover from automatically.
+   */
+  const perluLokasi = mode === "Ai" && sortBy === "jarak" && !hasCoordinates;
+
+  if (sortBy === "jarak" && !hasCoordinates) {
+    catatan.push(
+      "Pengurutan menurut jarak diabaikan karena permintaan tidak menyertakan koordinat " +
+        "pengguna; hasil diurutkan menurut nama.",
+    );
   }
 
   const totalCount = ordered.length;
@@ -437,30 +519,25 @@ export function runMockSearch(params: SearchSpbuParams): SearchSpbuResponse {
     jarakKm: entry.jarakKm === null ? null : Math.round(entry.jarakKm * 10) / 10,
   }));
 
-  const mode = params.mode ?? "Harfiah";
-
-  // Offline stand-in for the LLM step: there is no model to call, so this just
-  // echoes the keyword back as "understood" rather than extracting real filters.
-  const tafsir: TafsirAi | null =
-    mode === "Ai"
-      ? {
-          search: keyword || null,
-          regional: null,
-          provinsi: null,
-          kota: null,
-          produk: null,
-          fasilitas: null,
-          status: null,
-          tipeKepemilikan: null,
-          ratingMin: null,
-          ulasanMin: null,
-          radiusKm: null,
-          sortBy: null,
-          isDescending: null,
-          durasiMs: MOCK_AI_LATENCY_MS,
-          provider: "Gemini (mock)",
-        }
-      : null;
+  const tafsir: TafsirAi | null = aiHint
+    ? {
+        search: aiHint.search,
+        regional: null,
+        provinsi: null,
+        kota: null,
+        produk: null,
+        fasilitas: aiHint.fasilitas,
+        status: null,
+        tipeKepemilikan: null,
+        ratingMin: null,
+        ulasanMin: null,
+        radiusKm: null,
+        sortBy: aiHint.sortBy,
+        isDescending: aiHint.sortBy ? false : null,
+        durasiMs: MOCK_AI_LATENCY_MS,
+        provider: "Gemini (mock)",
+      }
+    : null;
 
   return {
     items,
@@ -477,6 +554,7 @@ export function runMockSearch(params: SearchSpbuParams): SearchSpbuResponse {
     kemampuan: capabilities,
     catatan,
     tafsir,
+    perluLokasi,
   };
 }
 

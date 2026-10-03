@@ -41,7 +41,12 @@ export type SearchSpbuParams = PaginationParams & {
   tipeKepemilikan?: string[];
   ratingMin?: number;
   ulasanMin?: number;
-  /** Radius filter; all three are required together. */
+  /**
+   * `lat`/`lon` must be sent together ("I am here"): results get `jarakKm`
+   * and can be sorted by distance. `radiusKm` is a separate, optional filter
+   * on top of that ("cut anything farther than this") — it is rejected on
+   * its own, without `lat`/`lon`.
+   */
   lat?: number;
   lon?: number;
   radiusKm?: number;
@@ -153,6 +158,11 @@ export type SearchSpbuResponse = {
   catatan: string[];
   /** Only present when `mode` was "Ai". */
   tafsir: TafsirAi | null;
+  /**
+   * True when "Ai" interpreted the sentence as needing the user's location but
+   * none was sent — the caller should ask for it and retry with `lat`/`lon`.
+   */
+  perluLokasi: boolean;
 };
 
 export type SpbuSuggestionItem = {

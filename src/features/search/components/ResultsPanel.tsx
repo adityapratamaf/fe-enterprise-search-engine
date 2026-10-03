@@ -63,6 +63,10 @@ export function ResultsPanel({
                 Menampilkan {formatCount(from)} - {formatCount(to)} dari{" "}
                 <b className="font-semibold text-ink-900">{formatCount(data.totalCount)}</b> hasil (
                 {formatMs(data.tookMs)})
+                {/* The dropdown reflects what the user picked; "Ai" can apply a
+                    different order on its own (e.g. "terdekat" → jarak), so this
+                    says what actually happened instead of letting the two drift. */}
+                {mode === "Ai" && <> · Diurutkan: {data.urutan}</>}
               </span>
               {isFetching &&
                 (mode === "Ai" ? (
