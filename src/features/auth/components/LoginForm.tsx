@@ -51,7 +51,7 @@ export function LoginForm({
           frameClassName="mt-1.5"
           value={email}
           onChange={(event) => onEmailChange(event.target.value)}
-          placeholder="Masukkan email Anda"
+          placeholder="Masukkan email"
           leading={<Icon name="mail-line" className="text-lg text-ink-500" />}
         />
       </div>
