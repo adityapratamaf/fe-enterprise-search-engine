@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet.markercluster";
 import { useMap } from "react-leaflet";
-import type { SpbuMarker } from "../types";
+import type { SpbuMarker } from "./types";
 import { createClusterIcon, createStationIcon } from "./markerIcons";
 
 type Props = {

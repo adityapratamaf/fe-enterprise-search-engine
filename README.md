@@ -125,12 +125,12 @@ src/
     ui/                 primitive lintas fitur (Button, Card, Input, Icon, ...)
     layout/             MainLayout, Topbar, MobileNav, UserMenu
     shared/             AppErrorBoundary, StatusBadge
+    map/                komponen peta Leaflet (SpbuMap, MapControls, ...); dipakai oleh `search`
   config/               routes.ts, navigation.ts
   contexts/             AuthContext (sesi, dipakai lintas fitur)
   features/
     auth/               components/ · data.ts · types.ts · utils.ts · LoginPage.tsx
     search/             components/ · hooks/ · data.ts · types.ts · utils.ts · SearchPage.tsx
-    map/                components/ · data.ts · types.ts · MapPage.tsx
     misc/               halaman placeholder
   hooks/                hook lintas fitur (useDebouncedValue, useClickOutside)
   lib/                  utils.ts (cn)
@@ -182,7 +182,7 @@ screen reader.
   **major 6** (`createBrowserRouter`).
 - `server.host` dibatasi ke `localhost` supaya dev server tidak otomatis
   terbuka ke jaringan lokal.
-- Peta memakai **Leaflet + leaflet.markercluster** sungguhan (`features/map`).
+- Peta memakai **Leaflet + leaflet.markercluster** sungguhan (`components/map`).
   Marker berupa `divIcon` berwarna menurut status, sehingga tidak bergantung pada
   aset gambar Leaflet yang biasa pecah saat di-bundle. Bundle Leaflet (~191 kB)
   dimuat terpisah: panel peta di halaman pencarian memakai `React.lazy`, jadi

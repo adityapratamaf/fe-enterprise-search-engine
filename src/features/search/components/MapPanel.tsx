@@ -1,8 +1,8 @@
 import { lazy, Suspense, useMemo } from "react";
 import type { SpbuSearchItem } from "@/api";
 import { Card, Skeleton } from "@/components/ui";
-import { MapControls } from "@/features/map/components/MapControls";
-import { toMarker } from "@/features/map/types";
+import { MapControls } from "@/components/map/MapControls";
+import { toMarker } from "@/components/map/types";
 import type { MapBounds } from "@/types/map";
 import { googleMapsUrl } from "@/utils/format";
 
@@ -13,7 +13,7 @@ import { googleMapsUrl } from "@/utils/format";
  * fallback does not shift anything around it.
  */
 const SpbuMap = lazy(() =>
-  import("@/features/map/components/SpbuMap").then((module) => ({ default: module.SpbuMap })),
+  import("@/components/map/SpbuMap").then((module) => ({ default: module.SpbuMap })),
 );
 
 type Props = {

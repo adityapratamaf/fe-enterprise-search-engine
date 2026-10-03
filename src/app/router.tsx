@@ -58,12 +58,6 @@ export const routes: RouteObject[] = [
                 }),
               },
               {
-                path: ROUTES.map,
-                lazy: async () => ({
-                  Component: (await import("@/features/map/MapPage")).MapPage,
-                }),
-              },
-              {
                 path: ROUTES.benchmark,
                 lazy: async () => ({
                   Component: (await import("@/features/benchmark/BenchmarkPage")).BenchmarkPage,

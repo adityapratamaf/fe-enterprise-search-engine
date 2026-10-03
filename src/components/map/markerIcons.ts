@@ -1,5 +1,5 @@
 import L from "leaflet";
-import { CLUSTER_TIERS, FALLBACK_STATUS_COLOR, STATUS_COLORS } from "../data";
+import { CLUSTER_TIERS, FALLBACK_STATUS_COLOR, STATUS_COLORS } from "./data";
 
 function colorFor(status: string): string {
   return STATUS_COLORS[status.trim().toLowerCase()] ?? FALLBACK_STATUS_COLOR;

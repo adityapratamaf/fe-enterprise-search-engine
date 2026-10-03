@@ -39,10 +39,3 @@ export const CLUSTER_TIERS = [
   { max: 49, size: 40, className: "cluster-md" },
   { max: Infinity, size: 48, className: "cluster-lg" },
 ];
-
-export const MAP_LEGEND = [
-  { status: "Aktif", color: STATUS_COLORS.aktif },
-  { status: "Maintenance", color: STATUS_COLORS.maintenance },
-  { status: "Tidak Aktif", color: STATUS_COLORS.tidakaktif },
-  { status: "Tutup", color: STATUS_COLORS.tutup },
-];

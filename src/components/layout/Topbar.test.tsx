@@ -40,7 +40,7 @@ describe("Topbar", () => {
 
     const nav = screen.getByRole("navigation", { name: /Navigasi utama/i });
     const active = within(nav).getByRole("link", { name: "Analitik" });
-    const inactive = within(nav).getByRole("link", { name: "Map" });
+    const inactive = within(nav).getByRole("link", { name: "Benchmark" });
 
     // NavLink sets aria-current on the matched route.
     expect(active).toHaveAttribute("aria-current", "page");

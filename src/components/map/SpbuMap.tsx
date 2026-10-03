@@ -4,8 +4,8 @@ import { MapContainer, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import { useMapViewStore } from "@/stores/useMapViewStore";
 import { cn } from "@/lib/utils";
 import type { MapBounds } from "@/types/map";
-import { DEFAULT_CENTER, DEFAULT_ZOOM, FOCUS_ZOOM, MAX_BOUNDS, TILE_LAYER } from "../data";
-import type { SpbuMapProps } from "../types";
+import { DEFAULT_CENTER, DEFAULT_ZOOM, FOCUS_ZOOM, MAX_BOUNDS, TILE_LAYER } from "./data";
+import type { SpbuMapProps } from "./types";
 import { ClusterLayer } from "./ClusterLayer";
 
 /** Reports the viewport after movement settles, and optionally remembers it. */
