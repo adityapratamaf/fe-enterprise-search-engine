@@ -46,8 +46,16 @@ export function SearchPage() {
    * explicit "SPBU terdekat" button with its own fixed radius.
    */
   const [aiCoords, setAiCoords] = useState<{ lat: number; lon: number } | null>(null);
+  const [locationAttemptFailed, setLocationAttemptFailed] = useState(false);
   const askedForLocationRef = useRef(false);
 
+  /**
+   * Speculative: try silently before/while the first "Ai" fetch is even in
+   * flight, so a returning user with already-granted permission often never
+   * sees the coordinate-less response at all. This is a speed optimisation
+   * only — correctness does not depend on it, since `suppressResults` below
+   * hides that response either way if it does arrive first.
+   */
   useEffect(() => {
     if (!hasSearched || state.mode !== "Ai" || state.near || aiCoords) return;
     let cancelled = false;
@@ -70,22 +78,39 @@ export function SearchPage() {
     return baseRequest;
   }, [baseRequest, state.mode, state.near, aiCoords]);
 
-  const { data, error, isLoading, isFetching, refetch } = useSpbuSearch(request, hasSearched);
+  const {
+    data: rawData,
+    error,
+    isLoading: queryIsLoading,
+    isFetching,
+    refetch,
+  } = useSpbuSearch(request, hasSearched);
 
   /**
    * The backend says the sentence needed a location to resolve (e.g.
-   * "terdekat") but none was sent — ask once, now, and let the search re-fire
-   * with the new coordinates if granted. A denial just leaves `aiCoords` null;
-   * the response's own `catatan` already explains the consequence.
+   * "terdekat") but none was sent — ask once, now, and retry with the
+   * coordinates if granted. Until this settles, `data` below hides that
+   * coordinate-less response (sorted nationwide by name) instead of showing
+   * it and swapping it a moment later for the real nearby results — that
+   * flash reads as the search having picked the wrong city, not as "still
+   * working".
    */
   useEffect(() => {
-    if (!data?.perluLokasi || state.near || aiCoords || askedForLocationRef.current) return;
+    if (!rawData?.perluLokasi || state.near || aiCoords || askedForLocationRef.current) return;
     askedForLocationRef.current = true;
 
     void requestCurrentPosition().then((coords) => {
-      if (coords) setAiCoords({ lat: coords.latitude, lon: coords.longitude });
+      if (coords) {
+        setAiCoords({ lat: coords.latitude, lon: coords.longitude });
+      } else {
+        setLocationAttemptFailed(true);
+      }
     });
-  }, [data?.perluLokasi, state.near, aiCoords]);
+  }, [rawData?.perluLokasi, state.near, aiCoords]);
+
+  const suppressResults = state.mode === "Ai" && !!rawData?.perluLokasi && !locationAttemptFailed;
+  const data = suppressResults ? undefined : rawData;
+  const isLoading = queryIsLoading || suppressResults;
 
   const [selectedKode, setSelectedKode] = useState<string | null>(null);
 
