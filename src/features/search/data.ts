@@ -27,9 +27,6 @@ export const DEFAULT_ENGINE: SearchEngineKind = "Elasticsearch";
 /** "Harfiah" matches the keyword as typed; the AI toggle switches to "Ai". */
 export const DEFAULT_MODE: SearchMode = "Harfiah";
 
-/** Radius tetap untuk "SPBU terdekat" — backend hanya menerima satu nilai per permintaan. */
-export const NEARBY_RADIUS_KM = 10;
-
 /** Provinsi and kota need the full list so the panel can filter client-side. */
 export const FACET_SIZE = 600;
 

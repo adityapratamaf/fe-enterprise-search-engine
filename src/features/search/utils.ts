@@ -12,7 +12,6 @@ import {
   FACET_SIZE,
   FACILITY_ICONS,
   FALLBACK_FACILITY_ICON,
-  NEARBY_RADIUS_KM,
   OPEN_24H_CODE,
   REGIONAL_NAMES,
   QUERY_KEYS,
@@ -149,9 +148,11 @@ export function toSearchRequest(state: SearchState): SearchSpbuParams {
     params.lonMax = state.bounds.lonMax;
   }
   if (state.near) {
+    // No radius: a hard cutoff can return zero results in a sparsely covered
+    // area, and every card already shows its own distance so the sort order
+    // alone communicates "near".
     params.lat = state.near.lat;
     params.lon = state.near.lon;
-    params.radiusKm = NEARBY_RADIUS_KM;
   }
 
   for (const key of FACET_KEYS) {
