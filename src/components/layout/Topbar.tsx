@@ -4,15 +4,13 @@ import { NAV_ITEMS } from "@/config/navigation";
 import { ROUTES } from "@/config/routes";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
-import { BRAND_LOGO, BRAND_TAGLINE } from "@/config/branding";
+import { BRAND_LOGO } from "@/config/branding";
 import { TopLoadingBar } from "./TopLoadingBar";
 import { UserMenu } from "./UserMenu";
 
 /**
  * Header layout follows the supplied design: logo, then navigation, then the
- * account cluster, then a tagline panel bleeding to the right edge of the
- * viewport. The panel sits outside the padded content row on purpose — it is
- * flush with the screen edge rather than with the page container.
+ * account cluster.
  */
 export function Topbar({ onOpenNav }: { onOpenNav: () => void }) {
   const { displayName, user } = useAuth();
@@ -69,26 +67,7 @@ export function Topbar({ onOpenNav }: { onOpenNav: () => void }) {
         </nav>
 
         <div className="ml-auto flex items-center gap-1 pr-3 sm:gap-2">
-          {/* Decorative for now: there is no notifications feature behind it, and
-              the count comes from the mockup rather than from data. */}
-          <button
-            type="button"
-            className="relative rounded-full p-2 text-ink-800 transition hover:bg-brand-50"
-            aria-label="Notifikasi"
-          >
-            <Icon name="notification-3-line" className="text-xl" />
-            <span className="absolute right-1 top-1 flex h-[15px] min-w-[15px] items-center justify-center rounded-full bg-danger-500 px-1 text-[9px] font-bold leading-none text-white">
-              3
-            </span>
-          </button>
-
           <UserMenu displayName={displayName} email={user?.email ?? ""} />
-        </div>
-
-        <div className="hidden h-full shrink-0 items-center rounded-l-[52px] bg-gradient-to-r from-brand-50 via-brand-50 to-brand-100 pl-9 pr-6 xl:flex">
-          <span className="whitespace-nowrap text-[13px] font-medium text-brand-600">
-            {BRAND_TAGLINE}
-          </span>
         </div>
       </div>
 

@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { NAV_ITEMS } from "@/config/navigation";
-import { BRAND_TAGLINE } from "@/config/branding";
 import { Topbar } from "./Topbar";
 
 function renderTopbar(initialUrl = "/") {
@@ -62,13 +61,6 @@ describe("Topbar", () => {
     expect(within(nav()).getByRole("link", { name: "Search" })).not.toHaveAttribute("aria-current");
   });
 
-  it("shows the notification bell with its badge", () => {
-    renderTopbar();
-
-    const bell = screen.getByRole("button", { name: /Notifikasi/i });
-    expect(within(bell).getByText("3")).toBeInTheDocument();
-  });
-
   it("shows the account avatar initials and the name on one line", () => {
     renderTopbar();
 
@@ -78,10 +70,5 @@ describe("Topbar", () => {
     expect(within(account).getByText("Aditya Pratama")).toBeInTheDocument();
     // The email belongs to the dropdown, not the header row.
     expect(within(account).queryByText(/@/)).toBeNull();
-  });
-
-  it("renders the brand tagline panel", () => {
-    renderTopbar();
-    expect(screen.getByText(BRAND_TAGLINE)).toBeInTheDocument();
   });
 });
