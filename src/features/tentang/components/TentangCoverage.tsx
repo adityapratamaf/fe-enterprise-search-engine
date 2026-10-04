@@ -8,7 +8,7 @@ export function TentangCoverage() {
         <Icon name="database-2-line" className="text-tile-blue-strong" />
         Cakupan Informasi
       </h2>
-      <p className="mt-1.5 text-[12px] leading-relaxed text-ink-600">
+      <p className="mt-3.5 text-[12px] leading-relaxed text-ink-600">
         Informasi SPBU yang tersedia dalam SPBU Search mencakup berbagai data penting untuk
         mendukung pencarian dan analisis.
       </p>
