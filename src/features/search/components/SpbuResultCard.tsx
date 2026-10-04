@@ -2,7 +2,7 @@ import type { SpbuSearchItem } from "@/api";
 import { Badge, Icon } from "@/components/ui";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { cn } from "@/lib/utils";
-import { formatCount, formatDistance, formatRating } from "@/utils/format";
+import { formatCount, formatDistance, formatRating, formatScore } from "@/utils/format";
 import { FACILITY_LIMIT, PRODUCT_LIMIT } from "../data";
 import { highlightedField } from "../highlight";
 import { facilityIcon, isOpen24Hours, spbuImageUrl } from "../utils";
@@ -15,6 +15,7 @@ type Props = {
 
 export function SpbuResultCard({ item, selected, onSelect }: Props) {
   const distance = formatDistance(item.jarakKm);
+  const score = formatScore(item.score);
   const open24h = isOpen24Hours(item.fasilitas);
 
   return (
@@ -58,10 +59,20 @@ export function SpbuResultCard({ item, selected, onSelect }: Props) {
               <span className="font-medium text-ink-400">({item.kodeSpbu})</span>
             </button>
           </h3>
-          {distance && (
-            <span className="flex shrink-0 items-center gap-1 text-[11.5px] text-ink-600">
-              <Icon name="map-pin-2-line" />
-              {distance}
+          {(distance || score) && (
+            <span className="flex shrink-0 flex-col items-end gap-0.5 text-[11.5px] text-ink-600">
+              {distance && (
+                <span className="flex items-center gap-1">
+                  <Icon name="map-pin-2-line" />
+                  {distance}
+                </span>
+              )}
+              {score && (
+                <span className="flex items-center gap-1">
+                  <Icon name="bar-chart-2-line" />
+                  Skor {score}
+                </span>
+              )}
             </span>
           )}
         </div>

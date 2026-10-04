@@ -15,6 +15,11 @@ export function formatRating(rating: number | null): string {
   return rating === null ? EMPTY_VALUE : oneDecimal.format(rating);
 }
 
+/** null means the result wasn't ranked by relevance (e.g. SQL engine, or an explicit sort). */
+export function formatScore(score: number | null): string | null {
+  return score === null ? null : oneDecimal.format(score);
+}
+
 export function formatDistance(jarakKm: number | null): string | null {
   if (jarakKm === null) return null;
   return jarakKm < 1
