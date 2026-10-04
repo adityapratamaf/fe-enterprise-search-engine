@@ -1,30 +1,27 @@
 import { Link } from "react-router-dom";
 import { Icon } from "@/components/ui";
 import { ROUTES } from "@/config/routes";
-import { TENTANG_BACKGROUND } from "../data";
+import { HERO_IMAGE } from "@/features/search/data";
 
-/** Same backdrop treatment as `SearchHero`: a masked photo fading into the
- * tinted ground on its left edge, rather than a second overlay div — a mask
- * reaches zero at the element's own edge, so there is no visible seam. */
-const FADE_MASK = "linear-gradient(to left, rgba(0,0,0,1) 45%, rgba(0,0,0,0) 100%)";
-
+/**
+ * Full-bleed photo behind the text, not a side panel. No scrim: the photo's
+ * own left side is sky, light enough on its own for the same dark text the
+ * rest of the app uses — a dark overlay here just dimmed the station for no
+ * contrast benefit on that side.
+ */
 export function TentangHero() {
   return (
     <section
       aria-labelledby="tentang-heading"
-      className="relative overflow-hidden border-b border-line-200 bg-surface-accent"
+      className="relative overflow-hidden border-b border-line-200"
     >
       <div
         aria-hidden
-        className="absolute inset-y-0 right-0 hidden w-[46%] bg-cover bg-right opacity-90 md:block"
-        style={{
-          backgroundImage: `url(${TENTANG_BACKGROUND})`,
-          maskImage: FADE_MASK,
-          WebkitMaskImage: FADE_MASK,
-        }}
+        className="absolute inset-0 bg-cover bg-right"
+        style={{ backgroundImage: `url(${HERO_IMAGE})` }}
       />
 
-      <div className="relative mx-auto max-w-[1540px] px-4 py-10 sm:px-5 lg:px-7">
+      <div className="relative mx-auto max-w-[1540px] px-4 py-16 sm:px-5 lg:px-7">
         <p className="text-[11px] font-bold uppercase tracking-wide text-brand-600">
           Tentang Aplikasi
         </p>

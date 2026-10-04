@@ -1,6 +1,3 @@
-/** Hero backdrop, masked the same way `HERO_IMAGE` is on the search/benchmark heroes. */
-export const TENTANG_BACKGROUND = "/spbu-background.png";
-
 /**
  * Facet truncation safety margin for the "Dataset" stats query — large enough
  * that a live backend's full provinsi/kota breakdown is never cut short by
