@@ -13,7 +13,7 @@ export function TentangHero() {
   return (
     <section
       aria-labelledby="tentang-heading"
-      className="relative overflow-hidden border-b border-line-200"
+      className="relative overflow-hidden border-b border-line-200/50"
     >
       <div
         aria-hidden
