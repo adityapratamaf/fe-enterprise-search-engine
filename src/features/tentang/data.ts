@@ -1,12 +1,23 @@
-/**
- * Facet truncation safety margin for the "Dataset" stats query — large enough
- * that a live backend's full provinsi/kota breakdown is never cut short by
- * the facet limit (mirrors the same margin `FACET_SIZE` gives the search
- * filter panel, kept as its own constant so this feature stays self-contained).
- */
-export const STATS_FACET_SIZE = 1000;
-
 export const APP_VERSION = "v1.0.0";
+
+/**
+ * "Cakupan Informasi" — what kinds of data the app covers, not how many rows
+ * exist. The badges are deliberately qualitative (not a live count): this
+ * card is about the breadth of what one SPBU document carries, which doesn't
+ * change between "mock" and "live" the way a row count would.
+ */
+export const COVERAGE_ITEMS: {
+  icon: string;
+  label: string;
+  badge: string;
+  tone: "brand" | "success";
+}[] = [
+  { icon: "map-pin-line", label: "Lokasi & Wilayah", badge: "Seluruh Indonesia", tone: "brand" },
+  { icon: "gas-station-line", label: "Produk BBM", badge: "Beragam", tone: "success" },
+  { icon: "store-2-line", label: "Fasilitas", badge: "Lengkap", tone: "brand" },
+  { icon: "time-line", label: "Status Operasional", badge: "Real-time", tone: "success" },
+  { icon: "file-list-line", label: "Detail SPBU", badge: "Tersedia", tone: "brand" },
+];
 
 /**
  * The four pillar tiles under the hero. `tone` is a whole literal class string
