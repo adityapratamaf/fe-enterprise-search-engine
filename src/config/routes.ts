@@ -2,7 +2,7 @@ export const ROUTES = {
   search: "/search",
   analytics: "/analytics",
   benchmark: "/benchmark",
-  about: "/about",
+  about: "/tentang",
   login: "/login",
 } as const;
 

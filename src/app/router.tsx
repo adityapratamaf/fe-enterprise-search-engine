@@ -72,7 +72,7 @@ export const routes: RouteObject[] = [
               {
                 path: ROUTES.about,
                 lazy: async () => ({
-                  Component: (await import("@/features/misc/AboutPage")).AboutPage,
+                  Component: (await import("@/features/tentang/TentangPage")).TentangPage,
                 }),
               },
             ],
